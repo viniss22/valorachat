@@ -13,7 +13,15 @@ import {
 } from "lucide-react";
 import { userProfile } from "@/lib/mock-data";
 
-const items = [
+type NavItem = {
+  to: string;
+  label: string;
+  icon: typeof LayoutDashboard;
+  exact?: boolean;
+  badge?: boolean;
+};
+
+const items: NavItem[] = [
   { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/app/whatsapp", label: "Central WhatsApp", icon: MessageCircle, badge: true },
   { to: "/app/receitas", label: "Receitas", icon: ArrowDownToLine },
@@ -22,7 +30,7 @@ const items = [
   { to: "/app/metas", label: "Metas", icon: Target },
   { to: "/app/assistente", label: "Assistente IA", icon: Sparkles },
   { to: "/app/relatorios", label: "Relatórios", icon: FileText },
-] as const;
+];
 
 export function AppSidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
