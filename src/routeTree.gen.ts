@@ -14,6 +14,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppWhatsappRouteImport } from './routes/app.whatsapp'
 import { Route as AppReceitasRouteImport } from './routes/app.receitas'
+import { Route as AppDespesasRouteImport } from './routes/app.despesas'
 
 const AppRoute = AppRouteImport.update({
   id: '/app',
@@ -40,16 +41,23 @@ const AppReceitasRoute = AppReceitasRouteImport.update({
   path: '/receitas',
   getParentRoute: () => AppRoute,
 } as any)
+const AppDespesasRoute = AppDespesasRouteImport.update({
+  id: '/despesas',
+  path: '/despesas',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/app/despesas': typeof AppDespesasRoute
   '/app/receitas': typeof AppReceitasRoute
   '/app/whatsapp': typeof AppWhatsappRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app/despesas': typeof AppDespesasRoute
   '/app/receitas': typeof AppReceitasRoute
   '/app/whatsapp': typeof AppWhatsappRoute
   '/app': typeof AppIndexRoute
@@ -58,16 +66,30 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/app/despesas': typeof AppDespesasRoute
   '/app/receitas': typeof AppReceitasRoute
   '/app/whatsapp': typeof AppWhatsappRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/app' | '/app/receitas' | '/app/whatsapp' | '/app/'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/app/despesas'
+    | '/app/receitas'
+    | '/app/whatsapp'
+    | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/app/receitas' | '/app/whatsapp' | '/app'
-  id: '__root__' | '/' | '/app' | '/app/receitas' | '/app/whatsapp' | '/app/'
+  to: '/' | '/app/despesas' | '/app/receitas' | '/app/whatsapp' | '/app'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/app/despesas'
+    | '/app/receitas'
+    | '/app/whatsapp'
+    | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -112,16 +134,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppReceitasRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/despesas': {
+      id: '/app/despesas'
+      path: '/despesas'
+      fullPath: '/app/despesas'
+      preLoaderRoute: typeof AppDespesasRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppDespesasRoute: typeof AppDespesasRoute
   AppReceitasRoute: typeof AppReceitasRoute
   AppWhatsappRoute: typeof AppWhatsappRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppDespesasRoute: AppDespesasRoute,
   AppReceitasRoute: AppReceitasRoute,
   AppWhatsappRoute: AppWhatsappRoute,
   AppIndexRoute: AppIndexRoute,
