@@ -13,6 +13,7 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppWhatsappRouteImport } from './routes/app.whatsapp'
+import { Route as AppReceitasRouteImport } from './routes/app.receitas'
 
 const AppRoute = AppRouteImport.update({
   id: '/app',
@@ -34,15 +35,22 @@ const AppWhatsappRoute = AppWhatsappRouteImport.update({
   path: '/whatsapp',
   getParentRoute: () => AppRoute,
 } as any)
+const AppReceitasRoute = AppReceitasRouteImport.update({
+  id: '/receitas',
+  path: '/receitas',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/app/receitas': typeof AppReceitasRoute
   '/app/whatsapp': typeof AppWhatsappRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app/receitas': typeof AppReceitasRoute
   '/app/whatsapp': typeof AppWhatsappRoute
   '/app': typeof AppIndexRoute
 }
@@ -50,15 +58,16 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/app/receitas': typeof AppReceitasRoute
   '/app/whatsapp': typeof AppWhatsappRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/app' | '/app/whatsapp' | '/app/'
+  fullPaths: '/' | '/app' | '/app/receitas' | '/app/whatsapp' | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/app/whatsapp' | '/app'
-  id: '__root__' | '/' | '/app' | '/app/whatsapp' | '/app/'
+  to: '/' | '/app/receitas' | '/app/whatsapp' | '/app'
+  id: '__root__' | '/' | '/app' | '/app/receitas' | '/app/whatsapp' | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -96,15 +105,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppWhatsappRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/receitas': {
+      id: '/app/receitas'
+      path: '/receitas'
+      fullPath: '/app/receitas'
+      preLoaderRoute: typeof AppReceitasRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppReceitasRoute: typeof AppReceitasRoute
   AppWhatsappRoute: typeof AppWhatsappRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppReceitasRoute: AppReceitasRoute,
   AppWhatsappRoute: AppWhatsappRoute,
   AppIndexRoute: AppIndexRoute,
 }
