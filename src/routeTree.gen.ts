@@ -13,8 +13,13 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppWhatsappRouteImport } from './routes/app.whatsapp'
+import { Route as AppRelatoriosRouteImport } from './routes/app.relatorios'
 import { Route as AppReceitasRouteImport } from './routes/app.receitas'
+import { Route as AppMetasRouteImport } from './routes/app.metas'
+import { Route as AppInvestimentosRouteImport } from './routes/app.investimentos'
 import { Route as AppDespesasRouteImport } from './routes/app.despesas'
+import { Route as AppAssistenteRouteImport } from './routes/app.assistente'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 
 const AppRoute = AppRouteImport.update({
   id: '/app',
@@ -36,9 +41,24 @@ const AppWhatsappRoute = AppWhatsappRouteImport.update({
   path: '/whatsapp',
   getParentRoute: () => AppRoute,
 } as any)
+const AppRelatoriosRoute = AppRelatoriosRouteImport.update({
+  id: '/relatorios',
+  path: '/relatorios',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppReceitasRoute = AppReceitasRouteImport.update({
   id: '/receitas',
   path: '/receitas',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMetasRoute = AppMetasRouteImport.update({
+  id: '/metas',
+  path: '/metas',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInvestimentosRoute = AppInvestimentosRouteImport.update({
+  id: '/investimentos',
+  path: '/investimentos',
   getParentRoute: () => AppRoute,
 } as any)
 const AppDespesasRoute = AppDespesasRouteImport.update({
@@ -46,19 +66,39 @@ const AppDespesasRoute = AppDespesasRouteImport.update({
   path: '/despesas',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAssistenteRoute = AppAssistenteRouteImport.update({
+  id: '/assistente',
+  path: '/assistente',
+  getParentRoute: () => AppRoute,
+} as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/api/chat': typeof ApiChatRoute
+  '/app/assistente': typeof AppAssistenteRoute
   '/app/despesas': typeof AppDespesasRoute
+  '/app/investimentos': typeof AppInvestimentosRoute
+  '/app/metas': typeof AppMetasRoute
   '/app/receitas': typeof AppReceitasRoute
+  '/app/relatorios': typeof AppRelatoriosRoute
   '/app/whatsapp': typeof AppWhatsappRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/chat': typeof ApiChatRoute
+  '/app/assistente': typeof AppAssistenteRoute
   '/app/despesas': typeof AppDespesasRoute
+  '/app/investimentos': typeof AppInvestimentosRoute
+  '/app/metas': typeof AppMetasRoute
   '/app/receitas': typeof AppReceitasRoute
+  '/app/relatorios': typeof AppRelatoriosRoute
   '/app/whatsapp': typeof AppWhatsappRoute
   '/app': typeof AppIndexRoute
 }
@@ -66,8 +106,13 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/api/chat': typeof ApiChatRoute
+  '/app/assistente': typeof AppAssistenteRoute
   '/app/despesas': typeof AppDespesasRoute
+  '/app/investimentos': typeof AppInvestimentosRoute
+  '/app/metas': typeof AppMetasRoute
   '/app/receitas': typeof AppReceitasRoute
+  '/app/relatorios': typeof AppRelatoriosRoute
   '/app/whatsapp': typeof AppWhatsappRoute
   '/app/': typeof AppIndexRoute
 }
@@ -76,18 +121,38 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/app'
+    | '/api/chat'
+    | '/app/assistente'
     | '/app/despesas'
+    | '/app/investimentos'
+    | '/app/metas'
     | '/app/receitas'
+    | '/app/relatorios'
     | '/app/whatsapp'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/app/despesas' | '/app/receitas' | '/app/whatsapp' | '/app'
+  to:
+    | '/'
+    | '/api/chat'
+    | '/app/assistente'
+    | '/app/despesas'
+    | '/app/investimentos'
+    | '/app/metas'
+    | '/app/receitas'
+    | '/app/relatorios'
+    | '/app/whatsapp'
+    | '/app'
   id:
     | '__root__'
     | '/'
     | '/app'
+    | '/api/chat'
+    | '/app/assistente'
     | '/app/despesas'
+    | '/app/investimentos'
+    | '/app/metas'
     | '/app/receitas'
+    | '/app/relatorios'
     | '/app/whatsapp'
     | '/app/'
   fileRoutesById: FileRoutesById
@@ -95,6 +160,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  ApiChatRoute: typeof ApiChatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -127,11 +193,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppWhatsappRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/relatorios': {
+      id: '/app/relatorios'
+      path: '/relatorios'
+      fullPath: '/app/relatorios'
+      preLoaderRoute: typeof AppRelatoriosRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/receitas': {
       id: '/app/receitas'
       path: '/receitas'
       fullPath: '/app/receitas'
       preLoaderRoute: typeof AppReceitasRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/metas': {
+      id: '/app/metas'
+      path: '/metas'
+      fullPath: '/app/metas'
+      preLoaderRoute: typeof AppMetasRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/investimentos': {
+      id: '/app/investimentos'
+      path: '/investimentos'
+      fullPath: '/app/investimentos'
+      preLoaderRoute: typeof AppInvestimentosRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/despesas': {
@@ -141,19 +228,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDespesasRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/assistente': {
+      id: '/app/assistente'
+      path: '/assistente'
+      fullPath: '/app/assistente'
+      preLoaderRoute: typeof AppAssistenteRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppAssistenteRoute: typeof AppAssistenteRoute
   AppDespesasRoute: typeof AppDespesasRoute
+  AppInvestimentosRoute: typeof AppInvestimentosRoute
+  AppMetasRoute: typeof AppMetasRoute
   AppReceitasRoute: typeof AppReceitasRoute
+  AppRelatoriosRoute: typeof AppRelatoriosRoute
   AppWhatsappRoute: typeof AppWhatsappRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAssistenteRoute: AppAssistenteRoute,
   AppDespesasRoute: AppDespesasRoute,
+  AppInvestimentosRoute: AppInvestimentosRoute,
+  AppMetasRoute: AppMetasRoute,
   AppReceitasRoute: AppReceitasRoute,
+  AppRelatoriosRoute: AppRelatoriosRoute,
   AppWhatsappRoute: AppWhatsappRoute,
   AppIndexRoute: AppIndexRoute,
 }
@@ -163,6 +272,7 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  ApiChatRoute: ApiChatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
