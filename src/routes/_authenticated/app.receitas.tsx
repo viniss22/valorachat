@@ -1,54 +1,67 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Plus } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Trash2 } from "lucide-react";
 import { PageHeader, Section, StatCard } from "@/components/page-header";
-import { transacoesRecentes, overview } from "@/lib/mock-data";
 import { brl, dateBR } from "@/lib/format";
+import { listTransactions, deleteTransaction } from "@/lib/transactions";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/app/receitas")({
   head: () => ({ meta: [{ title: "Receitas — FinanceChat" }] }),
   component: ReceitasPage,
 });
 
-const fontes = [
-  { nome: "Salário", valor: 6500 },
-  { nome: "Honorários", valor: 1200 },
-  { nome: "Dividendos", valor: 145 },
-  { nome: "Aluguéis", valor: 355 },
-];
-
 function ReceitasPage() {
-  const receitas = transacoesRecentes.filter((t) => t.tipo === "receita");
-  const total = fontes.reduce((s, x) => s + x.valor, 0);
+  const qc = useQueryClient();
+  const { data: txs = [], isLoading } = useQuery({ queryKey: ["transactions"], queryFn: listTransactions });
+  const receitas = txs.filter((t) => t.kind === "receita");
+  const totalCents = receitas.reduce((s, t) => s + t.amount_cents, 0);
+  const fontes = Object.entries(receitas.reduce<Record<string, number>>((acc, t) => {
+    acc[t.category] = (acc[t.category] ?? 0) + t.amount_cents; return acc;
+  }, {})).sort((a, b) => b[1] - a[1]);
+
+  async function handleDelete(id: string) {
+    if (!confirm("Excluir esta receita?")) return;
+    try { await deleteTransaction(id); toast.success("Receita excluída"); qc.invalidateQueries({ queryKey: ["transactions"] }); }
+    catch (e) { toast.error((e as Error).message); }
+  }
+
   return (
     <>
-      <PageHeader title="Receitas" description="Tudo o que entra na sua conta — salário, honorários, comissões, dividendos e mais."
-        actions={<button className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"><Plus className="size-4" /> Nova Receita</button>} />
+      <PageHeader title="Receitas" description="Tudo o que entra na sua conta. Registre novas entradas no botão flutuante (+)." />
       <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
-        <StatCard label="Receitas do Mês" value={brl(overview.receitas)} tone="success" hint="6 fontes diferentes" />
-        <StatCard label="Média 6 meses" value={brl(7791)} hint="↑ 8% vs. semestre anterior" />
-        <StatCard label="Próxima Previsão" value={brl(overview.receitasPrevisao)} hint="Inclui bônus e dividendos" />
+        <StatCard label="Total de Receitas" value={brl(totalCents / 100)} tone="success" hint={`${receitas.length} entradas`} />
+        <StatCard label="Fontes" value={String(fontes.length)} hint="Categorias diferentes" />
+        <StatCard label="Ticket Médio" value={receitas.length ? brl(totalCents / 100 / receitas.length) : brl(0)} />
       </div>
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Section title="Por fonte" className="lg:col-span-1">
-          <div className="space-y-4">
-            {fontes.map((f) => (
-              <div key={f.nome}>
-                <div className="mb-1 flex justify-between text-xs"><span className="font-medium">{f.nome}</span><span className="tabular-nums text-muted-foreground">{brl(f.valor)}</span></div>
-                <div className="h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-full bg-success" style={{ width: `${(f.valor / total) * 100}%` }} /></div>
-              </div>
-            ))}
-          </div>
+          {fontes.length === 0 ? <p className="text-sm text-muted-foreground">Sem receitas registradas.</p> : (
+            <div className="space-y-4">
+              {fontes.map(([name, cents]) => (
+                <div key={name}>
+                  <div className="mb-1 flex justify-between text-xs"><span className="font-medium">{name}</span><span className="tabular-nums text-muted-foreground">{brl(cents / 100)}</span></div>
+                  <div className="h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-full bg-success" style={{ width: `${(cents / totalCents) * 100}%` }} /></div>
+                </div>
+              ))}
+            </div>
+          )}
         </Section>
         <Section title="Receitas recentes" className="lg:col-span-2">
-          <ul className="divide-y divide-border">
-            {receitas.map((t) => (
-              <li key={t.id} className="flex items-center gap-3 py-3">
-                <div className="grid size-9 shrink-0 place-items-center rounded-full bg-success/10 text-success">+</div>
-                <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{t.descricao}</p><p className="text-xs text-muted-foreground">{t.categoria} · {dateBR(t.data)}{t.origem === "whatsapp" && " · via WhatsApp"}</p></div>
-                <span className="text-sm font-semibold tabular-nums text-success">+ {brl(t.valor)}</span>
-              </li>
-            ))}
-          </ul>
+          {isLoading ? <p className="text-sm text-muted-foreground">Carregando...</p> : receitas.length === 0 ? (
+            <p className="text-sm text-muted-foreground">Toque no botão + para registrar a primeira receita.</p>
+          ) : (
+            <ul className="divide-y divide-border">
+              {receitas.map((t) => (
+                <li key={t.id} className="flex items-center gap-3 py-3">
+                  <div className="grid size-9 shrink-0 place-items-center rounded-full bg-success/10 text-success">+</div>
+                  <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{t.description}</p><p className="text-xs text-muted-foreground">{t.category} · {dateBR(t.transaction_date)}{t.source === "whatsapp" && " · via WhatsApp"}</p></div>
+                  <span className="text-sm font-semibold tabular-nums text-success">+ {brl(t.amount_cents / 100)}</span>
+                  <button onClick={() => handleDelete(t.id)} aria-label="Excluir" className="text-muted-foreground hover:text-destructive"><Trash2 className="size-4" /></button>
+                </li>
+              ))}
+            </ul>
+          )}
         </Section>
       </div>
     </>
