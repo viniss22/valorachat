@@ -3,7 +3,7 @@ import { Phone, RefreshCw, CheckCircle2 } from "lucide-react";
 import { PageHeader, Section, StatCard } from "@/components/page-header";
 import { conversasWhatsapp, userProfile } from "@/lib/mock-data";
 
-export const Route = createFileRoute("/app/whatsapp")({
+export const Route = createFileRoute("/_authenticated/app/whatsapp")({
   head: () => ({ meta: [{ title: "Central WhatsApp — FinanceChat" }] }),
   component: WhatsappPage,
 });

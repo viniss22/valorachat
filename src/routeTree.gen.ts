@@ -9,112 +9,118 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AppIndexRouteImport } from './routes/app.index'
-import { Route as AppWhatsappRouteImport } from './routes/app.whatsapp'
-import { Route as AppRelatoriosRouteImport } from './routes/app.relatorios'
-import { Route as AppReceitasRouteImport } from './routes/app.receitas'
-import { Route as AppMetasRouteImport } from './routes/app.metas'
-import { Route as AppInvestimentosRouteImport } from './routes/app.investimentos'
-import { Route as AppDespesasRouteImport } from './routes/app.despesas'
-import { Route as AppAssistenteRouteImport } from './routes/app.assistente'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
+import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
+import { Route as AuthenticatedAppWhatsappRouteImport } from './routes/_authenticated/app.whatsapp'
+import { Route as AuthenticatedAppRelatoriosRouteImport } from './routes/_authenticated/app.relatorios'
+import { Route as AuthenticatedAppReceitasRouteImport } from './routes/_authenticated/app.receitas'
+import { Route as AuthenticatedAppMetasRouteImport } from './routes/_authenticated/app.metas'
+import { Route as AuthenticatedAppInvestimentosRouteImport } from './routes/_authenticated/app.investimentos'
+import { Route as AuthenticatedAppDespesasRouteImport } from './routes/_authenticated/app.despesas'
+import { Route as AuthenticatedAppAssistenteRouteImport } from './routes/_authenticated/app.assistente'
 
-const AppRoute = AppRouteImport.update({
-  id: '/app',
-  path: '/app',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
-const AppIndexRoute = AppIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppWhatsappRoute = AppWhatsappRouteImport.update({
-  id: '/whatsapp',
-  path: '/whatsapp',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppRelatoriosRoute = AppRelatoriosRouteImport.update({
-  id: '/relatorios',
-  path: '/relatorios',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppReceitasRoute = AppReceitasRouteImport.update({
-  id: '/receitas',
-  path: '/receitas',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppMetasRoute = AppMetasRouteImport.update({
-  id: '/metas',
-  path: '/metas',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppInvestimentosRoute = AppInvestimentosRouteImport.update({
-  id: '/investimentos',
-  path: '/investimentos',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppDespesasRoute = AppDespesasRouteImport.update({
-  id: '/despesas',
-  path: '/despesas',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAssistenteRoute = AppAssistenteRouteImport.update({
-  id: '/assistente',
-  path: '/assistente',
-  getParentRoute: () => AppRoute,
 } as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({
+  id: '/_authenticated/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAppIndexRoute = AuthenticatedAppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAppWhatsappRoute =
+  AuthenticatedAppWhatsappRouteImport.update({
+    id: '/whatsapp',
+    path: '/whatsapp',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppRelatoriosRoute =
+  AuthenticatedAppRelatoriosRouteImport.update({
+    id: '/relatorios',
+    path: '/relatorios',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppReceitasRoute =
+  AuthenticatedAppReceitasRouteImport.update({
+    id: '/receitas',
+    path: '/receitas',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppMetasRoute = AuthenticatedAppMetasRouteImport.update({
+  id: '/metas',
+  path: '/metas',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAppInvestimentosRoute =
+  AuthenticatedAppInvestimentosRouteImport.update({
+    id: '/investimentos',
+    path: '/investimentos',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppDespesasRoute =
+  AuthenticatedAppDespesasRouteImport.update({
+    id: '/despesas',
+    path: '/despesas',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppAssistenteRoute =
+  AuthenticatedAppAssistenteRouteImport.update({
+    id: '/assistente',
+    path: '/assistente',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/app': typeof AppRouteWithChildren
+  '/app': typeof AuthenticatedAppRouteWithChildren
   '/api/chat': typeof ApiChatRoute
-  '/app/assistente': typeof AppAssistenteRoute
-  '/app/despesas': typeof AppDespesasRoute
-  '/app/investimentos': typeof AppInvestimentosRoute
-  '/app/metas': typeof AppMetasRoute
-  '/app/receitas': typeof AppReceitasRoute
-  '/app/relatorios': typeof AppRelatoriosRoute
-  '/app/whatsapp': typeof AppWhatsappRoute
-  '/app/': typeof AppIndexRoute
+  '/app/assistente': typeof AuthenticatedAppAssistenteRoute
+  '/app/despesas': typeof AuthenticatedAppDespesasRoute
+  '/app/investimentos': typeof AuthenticatedAppInvestimentosRoute
+  '/app/metas': typeof AuthenticatedAppMetasRoute
+  '/app/receitas': typeof AuthenticatedAppReceitasRoute
+  '/app/relatorios': typeof AuthenticatedAppRelatoriosRoute
+  '/app/whatsapp': typeof AuthenticatedAppWhatsappRoute
+  '/app/': typeof AuthenticatedAppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/chat': typeof ApiChatRoute
-  '/app/assistente': typeof AppAssistenteRoute
-  '/app/despesas': typeof AppDespesasRoute
-  '/app/investimentos': typeof AppInvestimentosRoute
-  '/app/metas': typeof AppMetasRoute
-  '/app/receitas': typeof AppReceitasRoute
-  '/app/relatorios': typeof AppRelatoriosRoute
-  '/app/whatsapp': typeof AppWhatsappRoute
-  '/app': typeof AppIndexRoute
+  '/app/assistente': typeof AuthenticatedAppAssistenteRoute
+  '/app/despesas': typeof AuthenticatedAppDespesasRoute
+  '/app/investimentos': typeof AuthenticatedAppInvestimentosRoute
+  '/app/metas': typeof AuthenticatedAppMetasRoute
+  '/app/receitas': typeof AuthenticatedAppReceitasRoute
+  '/app/relatorios': typeof AuthenticatedAppRelatoriosRoute
+  '/app/whatsapp': typeof AuthenticatedAppWhatsappRoute
+  '/app': typeof AuthenticatedAppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/app': typeof AppRouteWithChildren
+  '/_authenticated/app': typeof AuthenticatedAppRouteWithChildren
   '/api/chat': typeof ApiChatRoute
-  '/app/assistente': typeof AppAssistenteRoute
-  '/app/despesas': typeof AppDespesasRoute
-  '/app/investimentos': typeof AppInvestimentosRoute
-  '/app/metas': typeof AppMetasRoute
-  '/app/receitas': typeof AppReceitasRoute
-  '/app/relatorios': typeof AppRelatoriosRoute
-  '/app/whatsapp': typeof AppWhatsappRoute
-  '/app/': typeof AppIndexRoute
+  '/_authenticated/app/assistente': typeof AuthenticatedAppAssistenteRoute
+  '/_authenticated/app/despesas': typeof AuthenticatedAppDespesasRoute
+  '/_authenticated/app/investimentos': typeof AuthenticatedAppInvestimentosRoute
+  '/_authenticated/app/metas': typeof AuthenticatedAppMetasRoute
+  '/_authenticated/app/receitas': typeof AuthenticatedAppReceitasRoute
+  '/_authenticated/app/relatorios': typeof AuthenticatedAppRelatoriosRoute
+  '/_authenticated/app/whatsapp': typeof AuthenticatedAppWhatsappRoute
+  '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -145,95 +151,32 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/app'
+    | '/_authenticated/app'
     | '/api/chat'
-    | '/app/assistente'
-    | '/app/despesas'
-    | '/app/investimentos'
-    | '/app/metas'
-    | '/app/receitas'
-    | '/app/relatorios'
-    | '/app/whatsapp'
-    | '/app/'
+    | '/_authenticated/app/assistente'
+    | '/_authenticated/app/despesas'
+    | '/_authenticated/app/investimentos'
+    | '/_authenticated/app/metas'
+    | '/_authenticated/app/receitas'
+    | '/_authenticated/app/relatorios'
+    | '/_authenticated/app/whatsapp'
+    | '/_authenticated/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AppRoute: typeof AppRouteWithChildren
+  AuthenticatedAppRoute: typeof AuthenticatedAppRouteWithChildren
   ApiChatRoute: typeof ApiChatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/app': {
-      id: '/app'
-      path: '/app'
-      fullPath: '/app'
-      preLoaderRoute: typeof AppRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/app/': {
-      id: '/app/'
-      path: '/'
-      fullPath: '/app/'
-      preLoaderRoute: typeof AppIndexRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/whatsapp': {
-      id: '/app/whatsapp'
-      path: '/whatsapp'
-      fullPath: '/app/whatsapp'
-      preLoaderRoute: typeof AppWhatsappRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/relatorios': {
-      id: '/app/relatorios'
-      path: '/relatorios'
-      fullPath: '/app/relatorios'
-      preLoaderRoute: typeof AppRelatoriosRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/receitas': {
-      id: '/app/receitas'
-      path: '/receitas'
-      fullPath: '/app/receitas'
-      preLoaderRoute: typeof AppReceitasRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/metas': {
-      id: '/app/metas'
-      path: '/metas'
-      fullPath: '/app/metas'
-      preLoaderRoute: typeof AppMetasRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/investimentos': {
-      id: '/app/investimentos'
-      path: '/investimentos'
-      fullPath: '/app/investimentos'
-      preLoaderRoute: typeof AppInvestimentosRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/despesas': {
-      id: '/app/despesas'
-      path: '/despesas'
-      fullPath: '/app/despesas'
-      preLoaderRoute: typeof AppDespesasRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/assistente': {
-      id: '/app/assistente'
-      path: '/assistente'
-      fullPath: '/app/assistente'
-      preLoaderRoute: typeof AppAssistenteRouteImport
-      parentRoute: typeof AppRoute
     }
     '/api/chat': {
       id: '/api/chat'
@@ -242,36 +185,100 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/app': {
+      id: '/_authenticated/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AuthenticatedAppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/app/': {
+      id: '/_authenticated/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AuthenticatedAppIndexRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/whatsapp': {
+      id: '/_authenticated/app/whatsapp'
+      path: '/whatsapp'
+      fullPath: '/app/whatsapp'
+      preLoaderRoute: typeof AuthenticatedAppWhatsappRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/relatorios': {
+      id: '/_authenticated/app/relatorios'
+      path: '/relatorios'
+      fullPath: '/app/relatorios'
+      preLoaderRoute: typeof AuthenticatedAppRelatoriosRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/receitas': {
+      id: '/_authenticated/app/receitas'
+      path: '/receitas'
+      fullPath: '/app/receitas'
+      preLoaderRoute: typeof AuthenticatedAppReceitasRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/metas': {
+      id: '/_authenticated/app/metas'
+      path: '/metas'
+      fullPath: '/app/metas'
+      preLoaderRoute: typeof AuthenticatedAppMetasRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/investimentos': {
+      id: '/_authenticated/app/investimentos'
+      path: '/investimentos'
+      fullPath: '/app/investimentos'
+      preLoaderRoute: typeof AuthenticatedAppInvestimentosRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/despesas': {
+      id: '/_authenticated/app/despesas'
+      path: '/despesas'
+      fullPath: '/app/despesas'
+      preLoaderRoute: typeof AuthenticatedAppDespesasRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/assistente': {
+      id: '/_authenticated/app/assistente'
+      path: '/assistente'
+      fullPath: '/app/assistente'
+      preLoaderRoute: typeof AuthenticatedAppAssistenteRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
   }
 }
 
-interface AppRouteChildren {
-  AppAssistenteRoute: typeof AppAssistenteRoute
-  AppDespesasRoute: typeof AppDespesasRoute
-  AppInvestimentosRoute: typeof AppInvestimentosRoute
-  AppMetasRoute: typeof AppMetasRoute
-  AppReceitasRoute: typeof AppReceitasRoute
-  AppRelatoriosRoute: typeof AppRelatoriosRoute
-  AppWhatsappRoute: typeof AppWhatsappRoute
-  AppIndexRoute: typeof AppIndexRoute
+interface AuthenticatedAppRouteChildren {
+  AuthenticatedAppAssistenteRoute: typeof AuthenticatedAppAssistenteRoute
+  AuthenticatedAppDespesasRoute: typeof AuthenticatedAppDespesasRoute
+  AuthenticatedAppInvestimentosRoute: typeof AuthenticatedAppInvestimentosRoute
+  AuthenticatedAppMetasRoute: typeof AuthenticatedAppMetasRoute
+  AuthenticatedAppReceitasRoute: typeof AuthenticatedAppReceitasRoute
+  AuthenticatedAppRelatoriosRoute: typeof AuthenticatedAppRelatoriosRoute
+  AuthenticatedAppWhatsappRoute: typeof AuthenticatedAppWhatsappRoute
+  AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
 }
 
-const AppRouteChildren: AppRouteChildren = {
-  AppAssistenteRoute: AppAssistenteRoute,
-  AppDespesasRoute: AppDespesasRoute,
-  AppInvestimentosRoute: AppInvestimentosRoute,
-  AppMetasRoute: AppMetasRoute,
-  AppReceitasRoute: AppReceitasRoute,
-  AppRelatoriosRoute: AppRelatoriosRoute,
-  AppWhatsappRoute: AppWhatsappRoute,
-  AppIndexRoute: AppIndexRoute,
+const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
+  AuthenticatedAppAssistenteRoute: AuthenticatedAppAssistenteRoute,
+  AuthenticatedAppDespesasRoute: AuthenticatedAppDespesasRoute,
+  AuthenticatedAppInvestimentosRoute: AuthenticatedAppInvestimentosRoute,
+  AuthenticatedAppMetasRoute: AuthenticatedAppMetasRoute,
+  AuthenticatedAppReceitasRoute: AuthenticatedAppReceitasRoute,
+  AuthenticatedAppRelatoriosRoute: AuthenticatedAppRelatoriosRoute,
+  AuthenticatedAppWhatsappRoute: AuthenticatedAppWhatsappRoute,
+  AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
 }
 
-const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+const AuthenticatedAppRouteWithChildren =
+  AuthenticatedAppRoute._addFileChildren(AuthenticatedAppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AppRoute: AppRouteWithChildren,
+  AuthenticatedAppRoute: AuthenticatedAppRouteWithChildren,
   ApiChatRoute: ApiChatRoute,
 }
 export const routeTree = rootRouteImport

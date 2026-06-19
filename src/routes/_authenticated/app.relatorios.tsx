@@ -14,7 +14,7 @@ import { PageHeader, Section, StatCard } from "@/components/page-header";
 import { evolucaoMensal, categoriasGasto } from "@/lib/mock-data";
 import { brl, pct } from "@/lib/format";
 
-export const Route = createFileRoute("/app/relatorios")({
+export const Route = createFileRoute("/_authenticated/app/relatorios")({
   head: () => ({ meta: [{ title: "Relatórios — FinanceChat" }] }),
   component: RelatoriosPage,
 });

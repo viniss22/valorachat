@@ -9,8 +9,6 @@
  * Sophisticated, trust-driven finance SaaS aesthetic.
  */
 
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
-
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
