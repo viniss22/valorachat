@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
@@ -21,6 +22,10 @@ import { Route as AuthenticatedAppInvestimentosRouteImport } from './routes/_aut
 import { Route as AuthenticatedAppDespesasRouteImport } from './routes/_authenticated/app.despesas'
 import { Route as AuthenticatedAppAssistenteRouteImport } from './routes/_authenticated/app.assistente'
 
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -32,9 +37,9 @@ const ApiChatRoute = ApiChatRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({
-  id: '/_authenticated/app',
+  id: '/app',
   path: '/app',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAppIndexRoute = AuthenticatedAppIndexRouteImport.update({
   id: '/',
@@ -111,6 +116,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/_authenticated/app': typeof AuthenticatedAppRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/app/assistente': typeof AuthenticatedAppAssistenteRoute
@@ -151,6 +157,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/_authenticated/app'
     | '/api/chat'
     | '/_authenticated/app/assistente'
@@ -165,12 +172,19 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthenticatedAppRoute: typeof AuthenticatedAppRouteWithChildren
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   ApiChatRoute: typeof ApiChatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -190,7 +204,7 @@ declare module '@tanstack/react-router' {
       path: '/app'
       fullPath: '/app'
       preLoaderRoute: typeof AuthenticatedAppRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/': {
       id: '/_authenticated/app/'
@@ -276,9 +290,20 @@ const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
 const AuthenticatedAppRouteWithChildren =
   AuthenticatedAppRoute._addFileChildren(AuthenticatedAppRouteChildren)
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAppRoute: typeof AuthenticatedAppRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAppRoute: AuthenticatedAppRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthenticatedAppRoute: AuthenticatedAppRouteWithChildren,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   ApiChatRoute: ApiChatRoute,
 }
 export const routeTree = rootRouteImport
