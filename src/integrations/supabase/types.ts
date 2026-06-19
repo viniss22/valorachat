@@ -77,6 +77,77 @@ export type Database = {
         }
         Relationships: []
       }
+      goal_contributions: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          goal_id: string
+          id: string
+          note: string | null
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string
+          goal_id: string
+          id?: string
+          note?: string | null
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          goal_id?: string
+          id?: string
+          note?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "goal_contributions_goal_id_fkey"
+            columns: ["goal_id"]
+            isOneToOne: false
+            referencedRelation: "goals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      goals: {
+        Row: {
+          accumulated_cents: number
+          color: string | null
+          created_at: string
+          deadline: string | null
+          id: string
+          target_cents: number
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          accumulated_cents?: number
+          color?: string | null
+          created_at?: string
+          deadline?: string | null
+          id?: string
+          target_cents: number
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          accumulated_cents?: number
+          color?: string | null
+          created_at?: string
+          deadline?: string | null
+          id?: string
+          target_cents?: number
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       lgpd_consents: {
         Row: {
           consent_type: string
@@ -117,7 +188,10 @@ export type Database = {
           id: string
           mfa_enabled: boolean
           updated_at: string
+          whatsapp_last_sync_at: string | null
           whatsapp_number: string | null
+          whatsapp_status: string
+          whatsapp_verified_at: string | null
         }
         Insert: {
           created_at?: string
@@ -125,7 +199,10 @@ export type Database = {
           id: string
           mfa_enabled?: boolean
           updated_at?: string
+          whatsapp_last_sync_at?: string | null
           whatsapp_number?: string | null
+          whatsapp_status?: string
+          whatsapp_verified_at?: string | null
         }
         Update: {
           created_at?: string
@@ -133,7 +210,10 @@ export type Database = {
           id?: string
           mfa_enabled?: boolean
           updated_at?: string
+          whatsapp_last_sync_at?: string | null
           whatsapp_number?: string | null
+          whatsapp_status?: string
+          whatsapp_verified_at?: string | null
         }
         Relationships: []
       }
@@ -211,6 +291,39 @@ export type Database = {
           created_at?: string
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      whatsapp_verifications: {
+        Row: {
+          attempts: number
+          code_hash: string
+          consumed_at: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          phone_e164: string
+          user_id: string
+        }
+        Insert: {
+          attempts?: number
+          code_hash: string
+          consumed_at?: string | null
+          created_at?: string
+          expires_at: string
+          id?: string
+          phone_e164: string
+          user_id: string
+        }
+        Update: {
+          attempts?: number
+          code_hash?: string
+          consumed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          phone_e164?: string
           user_id?: string
         }
         Relationships: []
