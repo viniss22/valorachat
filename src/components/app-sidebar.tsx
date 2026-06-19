@@ -1,4 +1,8 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import {
   LayoutDashboard,
   MessageCircle,
@@ -11,7 +15,6 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
-import { userProfile } from "@/lib/mock-data";
 
 type NavItem = {
   to: string;
@@ -34,6 +37,26 @@ const items: NavItem[] = [
 
 export function AppSidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [name, setName] = useState("Você");
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      const u = data.user;
+      if (!u) return;
+      const full = (u.user_metadata?.full_name as string) || u.email?.split("@")[0] || "Você";
+      setName(full);
+    });
+  }, []);
+
+  async function handleSignOut() {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    toast.success("Sessão encerrada");
+    navigate({ to: "/auth", replace: true });
+  }
 
   return (
     <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-border bg-sidebar lg:flex">
@@ -75,22 +98,22 @@ export function AppSidebar() {
       <div className="border-t border-border p-4">
         <div className="flex items-center gap-3 rounded-md px-2 py-2">
           <div className="grid size-9 place-items-center rounded-full bg-accent text-sm font-semibold text-primary">
-            {userProfile.name.charAt(0)}
+            {name.charAt(0).toUpperCase()}
           </div>
           <div className="flex min-w-0 flex-1 flex-col">
-            <span className="truncate text-sm font-medium">{userProfile.name}</span>
-            <span className="text-xs text-muted-foreground">Plano {userProfile.plan}</span>
+            <span className="truncate text-sm font-medium">{name}</span>
+            <span className="text-xs text-muted-foreground">Conta protegida</span>
           </div>
           <button className="text-muted-foreground hover:text-foreground" aria-label="Configurações">
             <Settings className="size-4" />
           </button>
         </div>
-        <Link
-          to="/"
-          className="mt-2 flex items-center gap-2 rounded-md px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+        <button
+          onClick={handleSignOut}
+          className="mt-2 flex w-full items-center gap-2 rounded-md px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
         >
           <LogOut className="size-3.5" /> Sair
-        </Link>
+        </button>
       </div>
     </aside>
   );

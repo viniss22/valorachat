@@ -5,7 +5,7 @@ import { PageHeader, Section, StatCard } from "@/components/page-header";
 import { metas as metasIniciais, type Meta } from "@/lib/mock-data";
 import { brl } from "@/lib/format";
 
-export const Route = createFileRoute("/app/metas")({
+export const Route = createFileRoute("/_authenticated/app/metas")({
   head: () => ({ meta: [{ title: "Metas Financeiras — FinanceChat" }] }),
   component: MetasPage,
 });

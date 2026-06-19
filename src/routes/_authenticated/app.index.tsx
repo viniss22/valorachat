@@ -1,4 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { listTransactions } from "@/lib/transactions";
 import {
   Area,
   AreaChart,
@@ -20,24 +24,36 @@ import {
   lembretes,
   metas,
   overview,
-  transacoesRecentes,
-  userProfile,
 } from "@/lib/mock-data";
 import { brl, dateBR } from "@/lib/format";
 
-export const Route = createFileRoute("/app/")({
+export const Route = createFileRoute("/_authenticated/app/")({
   head: () => ({ meta: [{ title: "Dashboard — FinanceChat" }] }),
   component: Dashboard,
 });
 
 function Dashboard() {
+  const [firstName, setFirstName] = useState("");
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      const u = data.user; if (!u) return;
+      const full = (u.user_metadata?.full_name as string) || u.email?.split("@")[0] || "";
+      setFirstName(full.split(" ")[0]);
+    });
+  }, []);
+  const { data: txs = [] } = useQuery({ queryKey: ["transactions"], queryFn: listTransactions });
+  const monthStart = new Date(); monthStart.setDate(1); const monthStartStr = monthStart.toISOString().slice(0, 10);
+  const monthTx = txs.filter((t) => t.transaction_date >= monthStartStr);
+  const monthReceitas = monthTx.filter(t => t.kind === "receita").reduce((s, t) => s + t.amount_cents, 0) / 100;
+  const monthDespesas = monthTx.filter(t => t.kind === "despesa").reduce((s, t) => s + t.amount_cents, 0) / 100;
+  const saldo = txs.reduce((s, t) => s + (t.kind === "receita" ? t.amount_cents : -t.amount_cents), 0) / 100;
   const totalGastos = categoriasGasto.reduce((s, c) => s + c.valor, 0);
 
   return (
     <>
       <PageHeader
-        title={`Olá, ${userProfile.name.split(" ")[0]}`}
-        description="Bem-vindo de volta. Seus dados foram atualizados com base nas últimas conversas do WhatsApp."
+        title={firstName ? `Olá, ${firstName}` : "Olá"}
+        description="Bem-vindo de volta. Seus dados são exclusivamente seus e estão criptografados."
         actions={
           <>
             <Link
@@ -46,36 +62,28 @@ function Dashboard() {
             >
               <MessageCircle className="size-4" /> Central WhatsApp
             </Link>
-            <button className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground ring-1 ring-primary hover:bg-primary/90 active:scale-[0.98]">
-              <Plus className="size-4" /> Novo Registro
-            </button>
+            <span className="hidden text-xs text-muted-foreground lg:inline">Use o botão + flutuante para registrar</span>
           </>
         }
       />
 
       <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          label="Saldo em Conta"
-          value={brl(overview.saldo)}
-          hint={`↑ ${overview.saldoDelta}% vs. mês anterior`}
+          label="Saldo Acumulado"
+          value={brl(saldo)}
+          tone={saldo >= 0 ? "success" : "primary"}
+          hint="Receitas − despesas"
         />
         <StatCard
           label="Receitas do Mês"
-          value={brl(overview.receitas)}
+          value={brl(monthReceitas)}
           tone="success"
-          hint={`Previsão: ${brl(overview.receitasPrevisao)}`}
+          hint={`${monthTx.filter(t => t.kind === "receita").length} entradas`}
         />
-        <StatCard label="Despesas do Mês" value={brl(overview.despesas)}>
-          <div className="mt-4 h-1 w-full overflow-hidden rounded-full bg-muted">
-            <div
-              className="h-full bg-destructive"
-              style={{ width: `${(overview.despesas / overview.despesasLimite) * 100}%` }}
-            />
-          </div>
-        </StatCard>
+        <StatCard label="Despesas do Mês" value={brl(monthDespesas)} hint={`${monthTx.filter(t => t.kind === "despesa").length} saídas`} />
         <StatCard
-          label="Patrimônio Total"
-          value={brl(overview.patrimonio)}
+          label="Total de Movimentações"
+          value={String(txs.length)}
           hint={`${brl(overview.investimentos)} em investimentos`}
         />
       </div>
@@ -179,33 +187,26 @@ function Dashboard() {
               </Link>
             }
           >
-            <ul className="divide-y divide-border">
-              {transacoesRecentes.slice(0, 5).map((t) => (
-                <li key={t.id} className="flex items-center gap-3 py-3">
-                  <div
-                    className={`grid size-9 shrink-0 place-items-center rounded-full ${
-                      t.tipo === "receita" ? "bg-success/10 text-success" : "bg-primary/10 text-primary"
-                    }`}
-                  >
-                    {t.tipo === "receita" ? "+" : "−"}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium">{t.descricao}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {t.categoria} · {dateBR(t.data)}
-                      {t.origem === "whatsapp" && " · via WhatsApp"}
-                    </p>
-                  </div>
-                  <span
-                    className={`text-sm font-semibold tabular-nums ${
-                      t.tipo === "receita" ? "text-success" : "text-foreground"
-                    }`}
-                  >
-                    {t.tipo === "receita" ? "+" : "−"} {brl(t.valor)}
-                  </span>
-                </li>
-              ))}
-            </ul>
+            {txs.length === 0 ? (
+              <p className="py-6 text-center text-sm text-muted-foreground">Toque no botão + para registrar sua primeira movimentação.</p>
+            ) : (
+              <ul className="divide-y divide-border">
+                {txs.slice(0, 5).map((t) => (
+                  <li key={t.id} className="flex items-center gap-3 py-3">
+                    <div className={`grid size-9 shrink-0 place-items-center rounded-full ${t.kind === "receita" ? "bg-success/10 text-success" : "bg-primary/10 text-primary"}`}>
+                      {t.kind === "receita" ? "+" : "−"}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium">{t.description}</p>
+                      <p className="text-xs text-muted-foreground">{t.category} · {dateBR(t.transaction_date)}</p>
+                    </div>
+                    <span className={`text-sm font-semibold tabular-nums ${t.kind === "receita" ? "text-success" : "text-foreground"}`}>
+                      {t.kind === "receita" ? "+" : "−"} {brl(t.amount_cents / 100)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </Section>
         </div>
 

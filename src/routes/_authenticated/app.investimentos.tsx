@@ -16,7 +16,7 @@ import { evolucaoInvestimentos, investimentos } from "@/lib/mock-data";
 import { brl, pct } from "@/lib/format";
 import { Plus, TrendingUp, TrendingDown } from "lucide-react";
 
-export const Route = createFileRoute("/app/investimentos")({
+export const Route = createFileRoute("/_authenticated/app/investimentos")({
   head: () => ({ meta: [{ title: "Investimentos — FinanceChat" }] }),
   component: InvestimentosPage,
 });
