@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { AppSidebar, MobileNav } from "@/components/app-sidebar";
+import { TransactionFab } from "@/components/transaction-fab";
 
 export const Route = createFileRoute("/_authenticated/app")({
   component: AppLayout,
@@ -14,6 +15,7 @@ function AppLayout() {
           <Outlet />
         </div>
       </main>
+      <TransactionFab />
       <MobileNav />
     </div>
   );
