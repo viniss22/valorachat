@@ -4,7 +4,7 @@ import { PageHeader, Section, StatCard } from "@/components/page-header";
 import { transacoesRecentes, overview } from "@/lib/mock-data";
 import { brl, dateBR } from "@/lib/format";
 
-export const Route = createFileRoute("/app/receitas")({
+export const Route = createFileRoute("/_authenticated/app/receitas")({
   head: () => ({ meta: [{ title: "Receitas — FinanceChat" }] }),
   component: ReceitasPage,
 });

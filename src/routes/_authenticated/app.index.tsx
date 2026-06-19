@@ -25,7 +25,7 @@ import {
 } from "@/lib/mock-data";
 import { brl, dateBR } from "@/lib/format";
 
-export const Route = createFileRoute("/app/")({
+export const Route = createFileRoute("/_authenticated/app/")({
   head: () => ({ meta: [{ title: "Dashboard — FinanceChat" }] }),
   component: Dashboard,
 });

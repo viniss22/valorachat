@@ -6,7 +6,7 @@ import { Send, Sparkles, Loader2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { PageHeader } from "@/components/page-header";
 
-export const Route = createFileRoute("/app/assistente")({
+export const Route = createFileRoute("/_authenticated/app/assistente")({
   head: () => ({ meta: [{ title: "Assistente IA — FinanceChat" }] }),
   component: AssistentePage,
 });

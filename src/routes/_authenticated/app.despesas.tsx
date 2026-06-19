@@ -4,7 +4,7 @@ import { PageHeader, Section, StatCard } from "@/components/page-header";
 import { categoriasGasto, transacoesRecentes, overview } from "@/lib/mock-data";
 import { brl, dateBR } from "@/lib/format";
 
-export const Route = createFileRoute("/app/despesas")({
+export const Route = createFileRoute("/_authenticated/app/despesas")({
   head: () => ({ meta: [{ title: "Despesas — FinanceChat" }] }),
   component: DespesasPage,
 });
