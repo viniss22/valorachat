@@ -154,7 +154,7 @@ export async function updateTransaction(input: TransactionUpdate) {
   if (typeof amount === "number") patch.amount_cents = Math.round(amount * 100);
   delete (patch as { kind?: unknown }).kind; // kind imutável
 
-  const { error } = await supabase.from("transactions").update(patch).eq("id", id);
+  const { error } = await supabase.from("transactions").update(patch as never).eq("id", id);
   if (error) throw error;
 
   if (userId) {
