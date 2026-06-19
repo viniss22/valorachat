@@ -14,16 +14,231 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string
+          entity: string | null
+          entity_id: string | null
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          entity?: string | null
+          entity_id?: string | null
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          entity?: string | null
+          entity_id?: string | null
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      categories: {
+        Row: {
+          color: string | null
+          created_at: string
+          id: string
+          kind: Database["public"]["Enums"]["transaction_kind"]
+          name: string
+          user_id: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          id?: string
+          kind: Database["public"]["Enums"]["transaction_kind"]
+          name: string
+          user_id: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["transaction_kind"]
+          name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      lgpd_consents: {
+        Row: {
+          consent_type: string
+          created_at: string
+          granted: boolean
+          id: string
+          ip_address: string | null
+          user_agent: string | null
+          user_id: string
+          version: string
+        }
+        Insert: {
+          consent_type: string
+          created_at?: string
+          granted: boolean
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id: string
+          version: string
+        }
+        Update: {
+          consent_type?: string
+          created_at?: string
+          granted?: boolean
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id?: string
+          version?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+          mfa_enabled: boolean
+          updated_at: string
+          whatsapp_number: string | null
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id: string
+          mfa_enabled?: boolean
+          updated_at?: string
+          whatsapp_number?: string | null
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          mfa_enabled?: boolean
+          updated_at?: string
+          whatsapp_number?: string | null
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          amount_cents: number
+          category: string
+          created_at: string
+          description: string
+          due_date: string | null
+          id: string
+          installment_number: number
+          installments_total: number
+          kind: Database["public"]["Enums"]["transaction_kind"]
+          notes: string | null
+          payment_method: Database["public"]["Enums"]["payment_method"] | null
+          received_date: string | null
+          source: string
+          transaction_date: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          category: string
+          created_at?: string
+          description: string
+          due_date?: string | null
+          id?: string
+          installment_number?: number
+          installments_total?: number
+          kind: Database["public"]["Enums"]["transaction_kind"]
+          notes?: string | null
+          payment_method?: Database["public"]["Enums"]["payment_method"] | null
+          received_date?: string | null
+          source?: string
+          transaction_date: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          category?: string
+          created_at?: string
+          description?: string
+          due_date?: string | null
+          id?: string
+          installment_number?: number
+          installments_total?: number
+          kind?: Database["public"]["Enums"]["transaction_kind"]
+          notes?: string | null
+          payment_method?: Database["public"]["Enums"]["payment_method"] | null
+          received_date?: string | null
+          source?: string
+          transaction_date?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
+      payment_method:
+        | "pix"
+        | "dinheiro"
+        | "debito"
+        | "credito"
+        | "boleto"
+        | "transferencia"
+        | "outro"
+      transaction_kind: "receita" | "despesa"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +365,18 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+      payment_method: [
+        "pix",
+        "dinheiro",
+        "debito",
+        "credito",
+        "boleto",
+        "transferencia",
+        "outro",
+      ],
+      transaction_kind: ["receita", "despesa"],
+    },
   },
 } as const
