@@ -138,3 +138,33 @@ export async function deleteTransaction(id: string) {
     });
   }
 }
+
+export const transactionUpdateSchema = transactionInputSchema.partial().extend({
+  id: z.string().uuid(),
+});
+export type TransactionUpdate = z.infer<typeof transactionUpdateSchema>;
+
+export async function updateTransaction(input: TransactionUpdate) {
+  const parsed = transactionUpdateSchema.parse(input);
+  const { id, amount, ...rest } = parsed;
+  const { data: userData } = await supabase.auth.getUser();
+  const userId = userData.user?.id;
+
+  const patch: Record<string, unknown> = { ...rest };
+  if (typeof amount === "number") patch.amount_cents = Math.round(amount * 100);
+  delete (patch as { kind?: unknown }).kind; // kind imutável
+
+  const { error } = await supabase.from("transactions").update(patch as never).eq("id", id);
+  if (error) throw error;
+
+  if (userId) {
+    await supabase.from("audit_logs").insert({
+      user_id: userId,
+      action: "transaction.update",
+      entity: "transaction",
+      entity_id: id,
+      metadata: patch as Record<string, never>,
+      user_agent: navigator.userAgent.slice(0, 500),
+    });
+  }
+}
