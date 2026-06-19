@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Trash2 } from "lucide-react";
+import { Trash2, Pencil } from "lucide-react";
+import { useState } from "react";
 import { PageHeader, Section, StatCard } from "@/components/page-header";
 import { brl, dateBR } from "@/lib/format";
-import { listTransactions, deleteTransaction } from "@/lib/transactions";
+import { listTransactions, deleteTransaction, type TransactionRow } from "@/lib/transactions";
+import { TransactionEditDialog } from "@/components/transaction-edit-dialog";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/app/receitas")({
@@ -13,6 +15,7 @@ export const Route = createFileRoute("/_authenticated/app/receitas")({
 
 function ReceitasPage() {
   const qc = useQueryClient();
+  const [editing, setEditing] = useState<TransactionRow | null>(null);
   const { data: txs = [], isLoading } = useQuery({ queryKey: ["transactions"], queryFn: listTransactions });
   const receitas = txs.filter((t) => t.kind === "receita");
   const totalCents = receitas.reduce((s, t) => s + t.amount_cents, 0);
@@ -57,6 +60,7 @@ function ReceitasPage() {
                   <div className="grid size-9 shrink-0 place-items-center rounded-full bg-success/10 text-success">+</div>
                   <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{t.description}</p><p className="text-xs text-muted-foreground">{t.category} · {dateBR(t.transaction_date)}{t.source === "whatsapp" && " · via WhatsApp"}</p></div>
                   <span className="text-sm font-semibold tabular-nums text-success">+ {brl(t.amount_cents / 100)}</span>
+                  <button onClick={() => setEditing(t)} aria-label="Editar" className="text-muted-foreground hover:text-primary"><Pencil className="size-4" /></button>
                   <button onClick={() => handleDelete(t.id)} aria-label="Excluir" className="text-muted-foreground hover:text-destructive"><Trash2 className="size-4" /></button>
                 </li>
               ))}
@@ -64,6 +68,7 @@ function ReceitasPage() {
           )}
         </Section>
       </div>
+      <TransactionEditDialog tx={editing} open={!!editing} onOpenChange={(v) => !v && setEditing(null)} />
     </>
   );
 }
