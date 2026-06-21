@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { convertToModelMessages, streamText, type UIMessage } from "ai";
-import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
+import { createOpenAIProvider } from "@/lib/ai-gateway.server";
 
 const SYSTEM_PROMPT = `Você é a IA do FinanceChat, uma assistente financeira pessoal brasileira, amigável e objetiva.
 
@@ -30,17 +30,18 @@ export const Route = createFileRoute("/api/chat")({
         if (!Array.isArray(messages)) {
           return new Response("Mensagens obrigatórias", { status: 400 });
         }
-        const key = process.env.LOVABLE_API_KEY;
-        if (!key) {
-          return new Response("LOVABLE_API_KEY ausente", { status: 500 });
+        try {
+          const openai = createOpenAIProvider();
+          const result = streamText({
+            model: openai("gpt-4-turbo"),
+            system: SYSTEM_PROMPT,
+            messages: await convertToModelMessages(messages),
+          });
+          return result.toUIMessageStreamResponse({ originalMessages: messages });
+        } catch (err) {
+          const message = err instanceof Error ? err.message : "Erro desconhecido";
+          return new Response(message, { status: 500 });
         }
-        const gateway = createLovableAiGatewayProvider(key);
-        const result = streamText({
-          model: gateway("google/gemini-3-flash-preview"),
-          system: SYSTEM_PROMPT,
-          messages: await convertToModelMessages(messages),
-        });
-        return result.toUIMessageStreamResponse({ originalMessages: messages });
       },
     },
   },
