@@ -295,6 +295,53 @@ export type Database = {
         }
         Relationships: []
       }
+      whatsapp_messages: {
+        Row: {
+          created_at: string
+          direction: string | null
+          id: string
+          message_text: string | null
+          parsing_error: string | null
+          parsing_status: string | null
+          phone_e164: string
+          transaction_id: string | null
+          user_id: string | null
+          whatsapp_message_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          direction?: string | null
+          id?: string
+          message_text?: string | null
+          parsing_error?: string | null
+          parsing_status?: string | null
+          phone_e164: string
+          transaction_id?: string | null
+          user_id?: string | null
+          whatsapp_message_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          direction?: string | null
+          id?: string
+          message_text?: string | null
+          parsing_error?: string | null
+          parsing_status?: string | null
+          phone_e164?: string
+          transaction_id?: string | null
+          user_id?: string | null
+          whatsapp_message_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_messages_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       whatsapp_verifications: {
         Row: {
           attempts: number
