@@ -124,6 +124,7 @@ export async function processWhatsappMessage(
       message_text: message,
       whatsapp_message_id: outboundId,
       parsing_status: "pending_confirmation",
+      parsed_json: parseResult as unknown as never,
     });
 
     return { success: false, message, requiresConfirmation: true };
@@ -222,4 +223,115 @@ export async function processWhatsappMessage(
 
     return { success: false, message, requiresConfirmation: false };
   }
+}
+
+/**
+ * Confirma a última mensagem `pending_confirmation` do usuário e cria a
+ * transação a partir do `parsed_json` salvo previamente. Se não houver nada
+ * pendente, apenas responde no WhatsApp.
+ */
+export async function confirmPendingTransaction(
+  userId: string,
+  phoneE164: string,
+): Promise<ProcessResult> {
+  const { supabaseAdmin } = await import(
+    "@/integrations/supabase/client.server"
+  );
+
+  const { data: pending } = await supabaseAdmin
+    .from("whatsapp_messages")
+    .select("id, parsed_json")
+    .eq("user_id", userId)
+    .eq("parsing_status", "pending_confirmation")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (!pending || !pending.parsed_json) {
+    const message = "Não há nada pendente para confirmar.";
+    await safeReply(phoneE164, message);
+    return { success: false, message, requiresConfirmation: false };
+  }
+
+  const parsed = pending.parsed_json as unknown as ParseResult;
+  const forced: ParseResult = { ...parsed, confidence: 1 };
+
+  // Marca a pendência como consumida para não confirmar duas vezes.
+  await supabaseAdmin
+    .from("whatsapp_messages")
+    .update({ parsing_status: "confirmed" })
+    .eq("id", pending.id);
+
+  return processWhatsappMessage(userId, phoneE164, forced);
+}
+
+/**
+ * Cancela a última mensagem `pending_confirmation` do usuário.
+ */
+export async function cancelPendingTransaction(
+  userId: string,
+  phoneE164: string,
+): Promise<ProcessResult> {
+  const { supabaseAdmin } = await import(
+    "@/integrations/supabase/client.server"
+  );
+
+  const { data: pending } = await supabaseAdmin
+    .from("whatsapp_messages")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("parsing_status", "pending_confirmation")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (!pending) {
+    const message = "Não há nada pendente para cancelar.";
+    await safeReply(phoneE164, message);
+    return { success: false, message, requiresConfirmation: false };
+  }
+
+  await supabaseAdmin
+    .from("whatsapp_messages")
+    .update({ parsing_status: "cancelled" })
+    .eq("id", pending.id);
+
+  const message = "Cancelado. Nada foi registrado.";
+  const outboundId = await safeReply(phoneE164, message);
+  await supabaseAdmin.from("whatsapp_messages").insert({
+    user_id: userId,
+    phone_e164: phoneE164,
+    direction: "outbound",
+    message_text: message,
+    whatsapp_message_id: outboundId,
+    parsing_status: "cancelled",
+  });
+
+  return { success: false, message, requiresConfirmation: false };
+}
+
+const CONFIRM_WORDS = new Set([
+  "confirmar",
+  "confirmo",
+  "sim",
+  "s",
+  "ok",
+  "isso",
+]);
+const CANCEL_WORDS = new Set(["cancelar", "cancela", "nao", "n"]);
+
+export type ConfirmationIntent = "confirm" | "cancel" | null;
+
+/** Detecta se o texto é uma resposta de confirmação/cancelamento. */
+export function detectConfirmationIntent(text: string): ConfirmationIntent {
+  const normalized = text
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\w\s]/g, "");
+  if (!normalized) return null;
+  if (CONFIRM_WORDS.has(normalized)) return "confirm";
+  if (CANCEL_WORDS.has(normalized)) return "cancel";
+  return null;
 }
