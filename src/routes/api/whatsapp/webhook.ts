@@ -1,7 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { parseFinanceMessage } from "@/lib/ai-gateway.server";
-import { processWhatsappMessage } from "@/lib/finance-processor";
+import {
+  processWhatsappMessage,
+  confirmPendingTransaction,
+  cancelPendingTransaction,
+  detectConfirmationIntent,
+} from "@/lib/finance-processor";
 import { sendWhatsappMessage } from "@/lib/whatsapp-sender";
 
 /**
@@ -121,6 +126,25 @@ export const Route = createFileRoute("/api/whatsapp/webhook")({
         }
 
         if (!userId) return new Response("ok", { status: 200 });
+
+        // Antes de chamar a IA, verifica se é uma resposta a uma confirmação pendente.
+        const intent = detectConfirmationIntent(text);
+        if (intent) {
+          try {
+            if (intent === "confirm") {
+              await confirmPendingTransaction(userId, from);
+            } else {
+              await cancelPendingTransaction(userId, from);
+            }
+            await supabaseAdmin
+              .from("whatsapp_messages")
+              .update({ parsing_status: "success" })
+              .eq("whatsapp_message_id", waMsgId);
+          } catch (err) {
+            console.error("[whatsapp] erro ao processar confirmação", err);
+          }
+          return new Response("ok", { status: 200 });
+        }
 
         // Parse + processamento.
         try {
