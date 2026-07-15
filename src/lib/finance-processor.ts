@@ -124,7 +124,7 @@ export async function processWhatsappMessage(
       message_text: message,
       whatsapp_message_id: outboundId,
       parsing_status: "pending_confirmation",
-      parsed_json: parseResult as unknown as Record<string, unknown>,
+      parsed_json: parseResult as unknown as never,
     });
 
     return { success: false, message, requiresConfirmation: true };
