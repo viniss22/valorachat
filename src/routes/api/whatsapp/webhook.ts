@@ -8,6 +8,8 @@ import {
   detectConfirmationIntent,
 } from "@/lib/finance-processor";
 import { sendWhatsappMessage } from "@/lib/whatsapp-sender";
+import { checkRateLimit } from "@/lib/whatsapp-limiter";
+import { incrementUsage } from "@/lib/usage-tracker";
 
 /**
  * Webhook do WhatsApp Cloud API (Meta).
@@ -95,6 +97,22 @@ export const Route = createFileRoute("/api/whatsapp/webhook")({
           "@/integrations/supabase/client.server"
         );
 
+        // ------- Idempotência: Meta pode reenviar o mesmo evento -------
+        try {
+          const { data: dup } = await supabaseAdmin
+            .from("whatsapp_messages")
+            .select("id")
+            .eq("whatsapp_message_id", waMsgId)
+            .eq("direction", "inbound")
+            .maybeSingle();
+          if (dup) {
+            console.log("[whatsapp] duplicate_ignored", waMsgId);
+            return new Response("ok", { status: 200 });
+          }
+        } catch (err) {
+          console.error("[whatsapp] erro na checagem de duplicata", err);
+        }
+
         // Resolve user_id pelo telefone.
         let userId: string | null = null;
         try {
@@ -127,6 +145,24 @@ export const Route = createFileRoute("/api/whatsapp/webhook")({
 
         if (!userId) return new Response("ok", { status: 200 });
 
+        await incrementUsage(userId, "whatsapp_messages_in");
+
+        // ------- Rate limit por plano -------
+        const rl = await checkRateLimit(userId);
+        if (!rl.allowed) {
+          try {
+            await sendWhatsappMessage(from, rl.message ?? "Limite atingido.");
+            await incrementUsage(userId, "whatsapp_messages_out");
+          } catch (err) {
+            console.error("[whatsapp] erro ao avisar limite", err);
+          }
+          await supabaseAdmin
+            .from("whatsapp_messages")
+            .update({ parsing_status: "rate_limited" })
+            .eq("whatsapp_message_id", waMsgId);
+          return new Response("ok", { status: 200 });
+        }
+
         // Antes de chamar a IA, verifica se é uma resposta a uma confirmação pendente.
         const intent = detectConfirmationIntent(text);
         if (intent) {
@@ -140,23 +176,29 @@ export const Route = createFileRoute("/api/whatsapp/webhook")({
               .from("whatsapp_messages")
               .update({ parsing_status: "success" })
               .eq("whatsapp_message_id", waMsgId);
+            await incrementUsage(userId, "whatsapp_messages_out");
           } catch (err) {
             console.error("[whatsapp] erro ao processar confirmação", err);
+            await incrementUsage(userId, "api_errors");
           }
           return new Response("ok", { status: 200 });
         }
 
         // Parse + processamento.
         try {
+          await incrementUsage(userId, "ai_parse_calls");
           const parsed = await parseFinanceMessage(text);
           await processWhatsappMessage(userId, from, parsed, waMsgId);
+          await incrementUsage(userId, "whatsapp_messages_out");
         } catch (err) {
+          await incrementUsage(userId, "api_errors");
           const errMsg =
             err instanceof Error
               ? err.message
               : "Não entendi. Tente: 'gastei 50 em almoço'";
           try {
             await sendWhatsappMessage(from, `❌ ${errMsg}`);
+            await incrementUsage(userId, "whatsapp_messages_out");
           } catch (sendErr) {
             console.error("[whatsapp] erro ao responder erro", sendErr);
           }
