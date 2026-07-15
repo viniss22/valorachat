@@ -19,8 +19,8 @@ export const Route = createFileRoute("/")({
     meta: [
       { title: "FinanceChat — Sua vida financeira no WhatsApp, com IA" },
       { name: "description", content: "Controle gastos, investimentos e metas conversando no WhatsApp. A IA do FinanceChat organiza tudo automaticamente em um dashboard premium." },
-      { property: "og:title", content: "FinanceChat — Gestão financeira via WhatsApp e IA" },
-      { property: "og:description", content: "A primeira plataforma SaaS brasileira que transforma mensagens do WhatsApp em controle financeiro inteligente." },
+      { property: "og:title", content: "FinanceChat — Sua vida financeira no WhatsApp, com IA" },
+      { property: "og:description", content: "Controle gastos, investimentos e metas conversando no WhatsApp. A IA do FinanceChat organiza tudo automaticamente em um dashboard premium." },
     ],
   }),
   component: Landing,
