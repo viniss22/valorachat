@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_processing_logs: {
+        Row: {
+          confidence: number | null
+          created_at: string
+          error_message: string | null
+          extracted_json: Json | null
+          id: string
+          latency_ms: number | null
+          message_text: string
+          model: string
+          tokens_input: number | null
+          tokens_output: number | null
+          user_id: string
+        }
+        Insert: {
+          confidence?: number | null
+          created_at?: string
+          error_message?: string | null
+          extracted_json?: Json | null
+          id?: string
+          latency_ms?: number | null
+          message_text: string
+          model: string
+          tokens_input?: number | null
+          tokens_output?: number | null
+          user_id: string
+        }
+        Update: {
+          confidence?: number | null
+          created_at?: string
+          error_message?: string | null
+          extracted_json?: Json | null
+          id?: string
+          latency_ms?: number | null
+          message_text?: string
+          model?: string
+          tokens_input?: number | null
+          tokens_output?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       audit_logs: {
         Row: {
           action: string
@@ -217,6 +259,48 @@ export type Database = {
         }
         Relationships: []
       }
+      subscriptions: {
+        Row: {
+          created_at: string
+          id: string
+          period_end: string | null
+          period_start: string | null
+          plan: string
+          price_cents: number | null
+          status: string
+          trial_ends_at: string | null
+          trial_started_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          period_end?: string | null
+          period_start?: string | null
+          plan: string
+          price_cents?: number | null
+          status?: string
+          trial_ends_at?: string | null
+          trial_started_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          period_end?: string | null
+          period_start?: string | null
+          plan?: string
+          price_cents?: number | null
+          status?: string
+          trial_ends_at?: string | null
+          trial_started_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       transactions: {
         Row: {
           amount_cents: number
@@ -271,6 +355,45 @@ export type Database = {
           transaction_date?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      usage_metrics: {
+        Row: {
+          ai_parse_calls: number
+          api_errors: number
+          created_at: string
+          id: string
+          metric_month: string
+          transactions_count: number
+          updated_at: string
+          user_id: string
+          whatsapp_messages_in: number
+          whatsapp_messages_out: number
+        }
+        Insert: {
+          ai_parse_calls?: number
+          api_errors?: number
+          created_at?: string
+          id?: string
+          metric_month: string
+          transactions_count?: number
+          updated_at?: string
+          user_id: string
+          whatsapp_messages_in?: number
+          whatsapp_messages_out?: number
+        }
+        Update: {
+          ai_parse_calls?: number
+          api_errors?: number
+          created_at?: string
+          id?: string
+          metric_month?: string
+          transactions_count?: number
+          updated_at?: string
+          user_id?: string
+          whatsapp_messages_in?: number
+          whatsapp_messages_out?: number
         }
         Relationships: []
       }
