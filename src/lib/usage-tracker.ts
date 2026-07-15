@@ -34,16 +34,18 @@ export async function incrementUsage(
       .maybeSingle();
 
     if (existing) {
+      const patch = { [field]: (existing[field] ?? 0) + by } as never;
       await supabaseAdmin
         .from("usage_metrics")
-        .update({ [field]: (existing[field] ?? 0) + by })
+        .update(patch)
         .eq("id", existing.id);
     } else {
-      await supabaseAdmin.from("usage_metrics").insert({
+      const row = {
         user_id: userId,
         metric_month,
         [field]: by,
-      });
+      } as never;
+      await supabaseAdmin.from("usage_metrics").insert(row);
     }
   } catch (err) {
     console.error("[usage-tracker] falha ao incrementar", field, err);
