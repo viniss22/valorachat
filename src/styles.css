@@ -55,6 +55,8 @@
   --color-success-foreground: var(--success-foreground);
   --color-warning: var(--warning);
   --color-whatsapp: var(--whatsapp);
+  --shadow-elegant: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 8px 24px -12px rgb(15 23 42 / 0.08);
+  --shadow-elevated: 0 4px 12px -2px rgb(15 23 42 / 0.08), 0 16px 40px -12px rgb(15 23 42 / 0.15);
 }
 
 :root {
@@ -97,6 +99,9 @@
   --sidebar-accent-foreground: oklch(0.3 0.08 235);
   --sidebar-border: oklch(0.93 0.005 256);
   --sidebar-ring: oklch(0.52 0.13 235);
+  --gradient-primary: linear-gradient(135deg, oklch(0.55 0.16 245) 0%, oklch(0.62 0.17 220) 100%);
+  --gradient-success: linear-gradient(135deg, oklch(0.68 0.15 160) 0%, oklch(0.72 0.14 175) 100%);
+  --gradient-hero: linear-gradient(135deg, oklch(0.42 0.15 250) 0%, oklch(0.55 0.16 235) 55%, oklch(0.62 0.14 205) 100%);
 }
 
 .dark {
@@ -136,6 +141,9 @@
   --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.551 0.027 264.364);
+  --gradient-primary: linear-gradient(135deg, oklch(0.55 0.18 245) 0%, oklch(0.42 0.16 260) 100%);
+  --gradient-success: linear-gradient(135deg, oklch(0.6 0.16 160) 0%, oklch(0.5 0.14 175) 100%);
+  --gradient-hero: linear-gradient(135deg, oklch(0.28 0.09 260) 0%, oklch(0.35 0.14 245) 55%, oklch(0.42 0.14 220) 100%);
 }
 
 @layer base {

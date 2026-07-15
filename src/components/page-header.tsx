@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { LucideIcon } from "lucide-react";
 
 export function PageHeader({
   title,
@@ -29,15 +30,21 @@ export function StatCard({
   value,
   hint,
   tone = "default",
+  icon: Icon,
+  gradient = false,
   children,
 }: {
   label: string;
   value: string;
   hint?: string;
   tone?: "default" | "success" | "danger" | "primary";
+  icon?: LucideIcon;
+  gradient?: boolean;
   children?: ReactNode;
 }) {
-  const toneClass =
+  const toneClass = gradient
+    ? "text-white"
+    :
     tone === "success"
       ? "text-success"
       : tone === "danger"
@@ -45,13 +52,42 @@ export function StatCard({
       : tone === "primary"
       ? "text-primary"
       : "text-foreground";
+  const iconTone = gradient
+    ? "bg-white/15 text-white"
+    : tone === "success"
+    ? "bg-success/10 text-success"
+    : tone === "danger"
+    ? "bg-destructive/10 text-destructive"
+    : tone === "primary"
+    ? "bg-primary/10 text-primary"
+    : "bg-muted text-muted-foreground";
   return (
-    <div className="rounded-xl bg-card p-5 ring-1 ring-black/5">
-      <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+    <div
+      className={`group relative overflow-hidden rounded-2xl p-5 ring-1 ring-black/5 shadow-[var(--shadow-elegant)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[var(--shadow-elevated)] animate-fade-in ${
+        gradient ? "text-white ring-white/10" : "bg-card"
+      }`}
+      style={gradient ? { background: "var(--gradient-hero)" } : undefined}
+    >
+      {gradient && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-16 -top-16 size-48 rounded-full bg-white/10 blur-3xl"
+        />
+      )}
+      <div className="relative flex items-start justify-between gap-3">
+        <p className={`text-xs font-medium uppercase tracking-wider ${gradient ? "text-white/80" : "text-muted-foreground"}`}>
         {label}
       </p>
-      <p className={`mt-2 text-2xl font-semibold tracking-tight ${toneClass}`}>{value}</p>
-      {hint && <p className="mt-4 text-xs text-muted-foreground">{hint}</p>}
+        {Icon && (
+          <span className={`grid size-9 shrink-0 place-items-center rounded-xl ${iconTone}`}>
+            <Icon className="size-4" />
+          </span>
+        )}
+      </div>
+      <p className={`relative mt-3 text-2xl font-semibold tracking-tight tabular-nums ${toneClass}`}>{value}</p>
+      {hint && (
+        <p className={`relative mt-3 text-xs ${gradient ? "text-white/70" : "text-muted-foreground"}`}>{hint}</p>
+      )}
       {children}
     </div>
   );
@@ -69,7 +105,9 @@ export function Section({
   className?: string;
 }) {
   return (
-    <section className={`rounded-xl bg-card p-6 ring-1 ring-black/5 ${className}`}>
+    <section
+      className={`rounded-2xl bg-card p-6 ring-1 ring-black/5 shadow-[var(--shadow-elegant)] transition-shadow duration-300 hover:shadow-[var(--shadow-elevated)] ${className}`}
+    >
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-sm font-semibold">{title}</h2>
         {action}

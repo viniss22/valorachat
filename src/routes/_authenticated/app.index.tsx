@@ -7,7 +7,7 @@ import {
   Area, AreaChart, CartesianGrid, Cell, Pie, PieChart,
   ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, TrendingUp, TrendingDown, Wallet, PiggyBank } from "lucide-react";
 import { PageHeader, Section, StatCard } from "@/components/page-header";
 import { brl, dateBR } from "@/lib/format";
 import {
@@ -128,10 +128,16 @@ function Dashboard() {
       </div>
 
       <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Receitas do Período" value={brl(receitas)} tone="success" hint={`${filtered.filter(t=>t.kind==="receita").length} entradas`} />
-        <StatCard label="Despesas do Período" value={brl(despesas)} hint={`${filtered.filter(t=>t.kind==="despesa").length} saídas`} />
-        <StatCard label="Saldo do Período" value={brl(saldoPeriodo)} tone={saldoPeriodo >= 0 ? "success" : "primary"} hint="Receitas − Despesas" />
-        <StatCard label="Economia" value={`${economia.toFixed(1)}%`} tone="primary" hint="% da receita poupada" />
+        <StatCard
+          label="Saldo do Período"
+          value={brl(saldoPeriodo)}
+          hint="Receitas − Despesas"
+          icon={Wallet}
+          gradient
+        />
+        <StatCard label="Receitas" value={brl(receitas)} tone="success" icon={TrendingUp} hint={`${filtered.filter(t=>t.kind==="receita").length} entradas`} />
+        <StatCard label="Despesas" value={brl(despesas)} tone="danger" icon={TrendingDown} hint={`${filtered.filter(t=>t.kind==="despesa").length} saídas`} />
+        <StatCard label="Economia" value={`${economia.toFixed(1)}%`} tone="primary" icon={PiggyBank} hint="% da receita poupada" />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
