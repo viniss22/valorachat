@@ -424,6 +424,7 @@ export type Database = {
           direction: string | null
           id: string
           message_text: string | null
+          parsed_json: Json | null
           parsing_error: string | null
           parsing_status: string | null
           phone_e164: string
@@ -436,6 +437,7 @@ export type Database = {
           direction?: string | null
           id?: string
           message_text?: string | null
+          parsed_json?: Json | null
           parsing_error?: string | null
           parsing_status?: string | null
           phone_e164: string
@@ -448,6 +450,7 @@ export type Database = {
           direction?: string | null
           id?: string
           message_text?: string | null
+          parsed_json?: Json | null
           parsing_error?: string | null
           parsing_status?: string | null
           phone_e164?: string
