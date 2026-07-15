@@ -190,6 +190,45 @@ export type Database = {
         }
         Relationships: []
       }
+      investments: {
+        Row: {
+          created_at: string
+          current_cents: number
+          id: string
+          institution: string | null
+          invested_cents: number
+          name: string
+          notes: string | null
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_cents: number
+          id?: string
+          institution?: string | null
+          invested_cents: number
+          name: string
+          notes?: string | null
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_cents?: number
+          id?: string
+          institution?: string | null
+          invested_cents?: number
+          name?: string
+          notes?: string | null
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       lgpd_consents: {
         Row: {
           consent_type: string
