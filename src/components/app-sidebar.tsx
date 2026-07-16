@@ -14,7 +14,15 @@ import {
   FileText,
   Settings,
   LogOut,
+  Menu,
 } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 type NavItem = {
   to: string;
@@ -121,24 +129,93 @@ export function AppSidebar() {
 
 export function MobileNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [openMore, setOpenMore] = useState(false);
+
+  async function handleSignOut() {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    toast.success("Sessão encerrada");
+    setOpenMore(false);
+    navigate({ to: "/auth", replace: true });
+  }
+
+  const primary = items.slice(0, 4);
+  const rest = items.slice(4);
+
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 flex justify-around border-t border-border bg-sidebar px-2 py-2 lg:hidden">
-      {items.slice(0, 5).map((item) => {
+    <nav className="fixed inset-x-0 bottom-0 z-40 flex justify-around border-t border-border bg-sidebar/95 px-2 pb-[env(safe-area-inset-bottom)] pt-2 backdrop-blur-lg shadow-[0_-4px_20px_-8px_rgb(15_23_42_/_0.15)] lg:hidden">
+      {primary.map((item) => {
         const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
         const Icon = item.icon;
         return (
           <Link
             key={item.to}
             to={item.to}
-            className={`flex flex-1 flex-col items-center gap-1 rounded-md py-1.5 text-[10px] font-medium ${
-              active ? "text-primary" : "text-muted-foreground"
+            className={`relative flex flex-1 flex-col items-center gap-1 rounded-lg py-1.5 text-[10px] font-medium transition-colors ${
+              active ? "text-primary" : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            <Icon className="size-5" />
+            {active && (
+              <span aria-hidden className="absolute inset-x-3 top-0 h-0.5 rounded-full bg-primary" />
+            )}
+            <span className={`grid place-items-center rounded-lg p-1.5 transition-colors ${active ? "bg-primary/10" : ""}`}>
+              <Icon className="size-5" />
+            </span>
             <span className="truncate">{item.label.split(" ")[0]}</span>
           </Link>
         );
       })}
+      <Sheet open={openMore} onOpenChange={setOpenMore}>
+        <SheetTrigger asChild>
+          <button
+            className={`relative flex flex-1 flex-col items-center gap-1 rounded-lg py-1.5 text-[10px] font-medium transition-colors ${
+              rest.some((i) => pathname.startsWith(i.to)) ? "text-primary" : "text-muted-foreground hover:text-foreground"
+            }`}
+            aria-label="Mais opções"
+          >
+            <span className="grid place-items-center rounded-lg p-1.5">
+              <Menu className="size-5" />
+            </span>
+            <span>Mais</span>
+          </button>
+        </SheetTrigger>
+        <SheetContent side="bottom" className="rounded-t-2xl">
+          <SheetHeader>
+            <SheetTitle>Menu</SheetTitle>
+          </SheetHeader>
+          <ul className="mt-4 space-y-1">
+            {rest.map((item) => {
+              const active = pathname.startsWith(item.to);
+              const Icon = item.icon;
+              return (
+                <li key={item.to}>
+                  <Link
+                    to={item.to}
+                    onClick={() => setOpenMore(false)}
+                    className={`flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors ${
+                      active ? "bg-primary/10 text-primary" : "text-foreground hover:bg-muted"
+                    }`}
+                  >
+                    <Icon className="size-4" />
+                    {item.label}
+                  </Link>
+                </li>
+              );
+            })}
+            <li className="pt-2">
+              <button
+                onClick={handleSignOut}
+                className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-destructive"
+              >
+                <LogOut className="size-4" /> Sair
+              </button>
+            </li>
+          </ul>
+        </SheetContent>
+      </Sheet>
     </nav>
   );
 }
