@@ -47,14 +47,14 @@ export function TransactionFab() {
   const mutation = useMutation({
     mutationFn: createTransaction,
     onSuccess: () => {
-      toast.success("Movimentação registrada");
+      toast.success("Movimentação registrada", { description: "Adicionamos ao seu histórico." });
       qc.invalidateQueries({ queryKey: ["transactions"] });
       setOpen(false);
       setAmount(""); setDescription(""); setCategory(""); setNotes("");
       setMethod(""); setHasInstallments(false); setInstallments(1);
       setDueDate(""); setReceivedDate("");
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error("Falha ao registrar", { description: err.message }),
   });
 
   function handleSubmit(e: React.FormEvent) {
@@ -85,7 +85,8 @@ export function TransactionFab() {
       <DialogTrigger asChild>
         <button
           aria-label="Nova movimentação"
-          className="fixed bottom-20 right-5 z-40 grid size-14 place-items-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 ring-2 ring-primary/30 transition active:scale-95 hover:bg-primary/90 lg:bottom-8 lg:right-8"
+          className="fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom))] right-5 z-40 grid size-14 place-items-center rounded-full text-primary-foreground shadow-[var(--shadow-elevated)] ring-4 ring-primary/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg active:scale-95 lg:bottom-8 lg:right-8"
+          style={{ background: "var(--gradient-primary)" }}
         >
           <Plus className="size-6" />
         </button>
