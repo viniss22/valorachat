@@ -1,12 +1,16 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { useState } from "react";
 import { AppSidebar, MobileNav } from "@/components/app-sidebar";
 import { TransactionFab } from "@/components/transaction-fab";
+import { QuickCaptureButton } from "@/components/quick-capture/QuickCaptureButton";
+import { QuickCapturePanel } from "@/components/quick-capture/QuickCapturePanel";
 
 export const Route = createFileRoute("/_authenticated/app")({
   component: AppLayout,
 });
 
 function AppLayout() {
+  const [captureOpen, setCaptureOpen] = useState(false);
   return (
     <div className="min-h-screen bg-background text-foreground">
       <AppSidebar />
@@ -15,6 +19,8 @@ function AppLayout() {
           <Outlet />
         </div>
       </main>
+      <QuickCaptureButton onClick={() => setCaptureOpen(true)} />
+      <QuickCapturePanel open={captureOpen} onOpenChange={setCaptureOpen} />
       <TransactionFab />
       <MobileNav />
     </div>
