@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as ApiCaptureRouteImport } from './routes/api/capture'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
 import { Route as ApiWhatsappWebhookRouteImport } from './routes/api/whatsapp/webhook'
@@ -53,6 +54,11 @@ const IndexRoute = IndexRouteImport.update({
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCaptureRoute = ApiCaptureRouteImport.update({
+  id: '/api/capture',
+  path: '/api/capture',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({
@@ -118,6 +124,7 @@ export interface FileRoutesByFullPath {
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
   '/app': typeof AuthenticatedAppRouteWithChildren
+  '/api/capture': typeof ApiCaptureRoute
   '/api/chat': typeof ApiChatRoute
   '/app/assistente': typeof AuthenticatedAppAssistenteRoute
   '/app/despesas': typeof AuthenticatedAppDespesasRoute
@@ -134,6 +141,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
+  '/api/capture': typeof ApiCaptureRoute
   '/api/chat': typeof ApiChatRoute
   '/app/assistente': typeof AuthenticatedAppAssistenteRoute
   '/app/despesas': typeof AuthenticatedAppDespesasRoute
@@ -153,6 +161,7 @@ export interface FileRoutesById {
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
   '/_authenticated/app': typeof AuthenticatedAppRouteWithChildren
+  '/api/capture': typeof ApiCaptureRoute
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/app/assistente': typeof AuthenticatedAppAssistenteRoute
   '/_authenticated/app/despesas': typeof AuthenticatedAppDespesasRoute
@@ -172,6 +181,7 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/termos'
     | '/app'
+    | '/api/capture'
     | '/api/chat'
     | '/app/assistente'
     | '/app/despesas'
@@ -188,6 +198,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/privacidade'
     | '/termos'
+    | '/api/capture'
     | '/api/chat'
     | '/app/assistente'
     | '/app/despesas'
@@ -206,6 +217,7 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/termos'
     | '/_authenticated/app'
+    | '/api/capture'
     | '/api/chat'
     | '/_authenticated/app/assistente'
     | '/_authenticated/app/despesas'
@@ -224,6 +236,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   TermosRoute: typeof TermosRoute
+  ApiCaptureRoute: typeof ApiCaptureRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiWhatsappWebhookRoute: typeof ApiWhatsappWebhookRoute
 }
@@ -270,6 +283,13 @@ declare module '@tanstack/react-router' {
       path: '/api/chat'
       fullPath: '/api/chat'
       preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/capture': {
+      id: '/api/capture'
+      path: '/api/capture'
+      fullPath: '/api/capture'
+      preLoaderRoute: typeof ApiCaptureRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/app': {
@@ -387,6 +407,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   TermosRoute: TermosRoute,
+  ApiCaptureRoute: ApiCaptureRoute,
   ApiChatRoute: ApiChatRoute,
   ApiWhatsappWebhookRoute: ApiWhatsappWebhookRoute,
 }
