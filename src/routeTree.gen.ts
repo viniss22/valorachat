@@ -15,9 +15,11 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as ApiCaptureRouteImport } from './routes/api/capture'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
 import { Route as ApiWhatsappWebhookRouteImport } from './routes/api/whatsapp/webhook'
+import { Route as ApiCaptureConfirmRouteImport } from './routes/api/capture.confirm'
 import { Route as AuthenticatedAppWhatsappRouteImport } from './routes/_authenticated/app.whatsapp'
 import { Route as AuthenticatedAppRelatoriosRouteImport } from './routes/_authenticated/app.relatorios'
 import { Route as AuthenticatedAppReceitasRouteImport } from './routes/_authenticated/app.receitas'
@@ -55,6 +57,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCaptureRoute = ApiCaptureRouteImport.update({
+  id: '/api/capture',
+  path: '/api/capture',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({
   id: '/app',
   path: '/app',
@@ -69,6 +76,11 @@ const ApiWhatsappWebhookRoute = ApiWhatsappWebhookRouteImport.update({
   id: '/api/whatsapp/webhook',
   path: '/api/whatsapp/webhook',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCaptureConfirmRoute = ApiCaptureConfirmRouteImport.update({
+  id: '/confirm',
+  path: '/confirm',
+  getParentRoute: () => ApiCaptureRoute,
 } as any)
 const AuthenticatedAppWhatsappRoute =
   AuthenticatedAppWhatsappRouteImport.update({
@@ -118,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
   '/app': typeof AuthenticatedAppRouteWithChildren
+  '/api/capture': typeof ApiCaptureRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/app/assistente': typeof AuthenticatedAppAssistenteRoute
   '/app/despesas': typeof AuthenticatedAppDespesasRoute
@@ -126,6 +139,7 @@ export interface FileRoutesByFullPath {
   '/app/receitas': typeof AuthenticatedAppReceitasRoute
   '/app/relatorios': typeof AuthenticatedAppRelatoriosRoute
   '/app/whatsapp': typeof AuthenticatedAppWhatsappRoute
+  '/api/capture/confirm': typeof ApiCaptureConfirmRoute
   '/api/whatsapp/webhook': typeof ApiWhatsappWebhookRoute
   '/app/': typeof AuthenticatedAppIndexRoute
 }
@@ -134,6 +148,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
+  '/api/capture': typeof ApiCaptureRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/app/assistente': typeof AuthenticatedAppAssistenteRoute
   '/app/despesas': typeof AuthenticatedAppDespesasRoute
@@ -142,6 +157,7 @@ export interface FileRoutesByTo {
   '/app/receitas': typeof AuthenticatedAppReceitasRoute
   '/app/relatorios': typeof AuthenticatedAppRelatoriosRoute
   '/app/whatsapp': typeof AuthenticatedAppWhatsappRoute
+  '/api/capture/confirm': typeof ApiCaptureConfirmRoute
   '/api/whatsapp/webhook': typeof ApiWhatsappWebhookRoute
   '/app': typeof AuthenticatedAppIndexRoute
 }
@@ -153,6 +169,7 @@ export interface FileRoutesById {
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
   '/_authenticated/app': typeof AuthenticatedAppRouteWithChildren
+  '/api/capture': typeof ApiCaptureRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/app/assistente': typeof AuthenticatedAppAssistenteRoute
   '/_authenticated/app/despesas': typeof AuthenticatedAppDespesasRoute
@@ -161,6 +178,7 @@ export interface FileRoutesById {
   '/_authenticated/app/receitas': typeof AuthenticatedAppReceitasRoute
   '/_authenticated/app/relatorios': typeof AuthenticatedAppRelatoriosRoute
   '/_authenticated/app/whatsapp': typeof AuthenticatedAppWhatsappRoute
+  '/api/capture/confirm': typeof ApiCaptureConfirmRoute
   '/api/whatsapp/webhook': typeof ApiWhatsappWebhookRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
 }
@@ -172,6 +190,7 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/termos'
     | '/app'
+    | '/api/capture'
     | '/api/chat'
     | '/app/assistente'
     | '/app/despesas'
@@ -180,6 +199,7 @@ export interface FileRouteTypes {
     | '/app/receitas'
     | '/app/relatorios'
     | '/app/whatsapp'
+    | '/api/capture/confirm'
     | '/api/whatsapp/webhook'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
@@ -188,6 +208,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/privacidade'
     | '/termos'
+    | '/api/capture'
     | '/api/chat'
     | '/app/assistente'
     | '/app/despesas'
@@ -196,6 +217,7 @@ export interface FileRouteTypes {
     | '/app/receitas'
     | '/app/relatorios'
     | '/app/whatsapp'
+    | '/api/capture/confirm'
     | '/api/whatsapp/webhook'
     | '/app'
   id:
@@ -206,6 +228,7 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/termos'
     | '/_authenticated/app'
+    | '/api/capture'
     | '/api/chat'
     | '/_authenticated/app/assistente'
     | '/_authenticated/app/despesas'
@@ -214,6 +237,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/receitas'
     | '/_authenticated/app/relatorios'
     | '/_authenticated/app/whatsapp'
+    | '/api/capture/confirm'
     | '/api/whatsapp/webhook'
     | '/_authenticated/app/'
   fileRoutesById: FileRoutesById
@@ -224,6 +248,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   TermosRoute: typeof TermosRoute
+  ApiCaptureRoute: typeof ApiCaptureRouteWithChildren
   ApiChatRoute: typeof ApiChatRoute
   ApiWhatsappWebhookRoute: typeof ApiWhatsappWebhookRoute
 }
@@ -272,6 +297,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/capture': {
+      id: '/api/capture'
+      path: '/api/capture'
+      fullPath: '/api/capture'
+      preLoaderRoute: typeof ApiCaptureRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/app': {
       id: '/_authenticated/app'
       path: '/app'
@@ -292,6 +324,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/whatsapp/webhook'
       preLoaderRoute: typeof ApiWhatsappWebhookRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/api/capture/confirm': {
+      id: '/api/capture/confirm'
+      path: '/confirm'
+      fullPath: '/api/capture/confirm'
+      preLoaderRoute: typeof ApiCaptureConfirmRouteImport
+      parentRoute: typeof ApiCaptureRoute
     }
     '/_authenticated/app/whatsapp': {
       id: '/_authenticated/app/whatsapp'
@@ -381,12 +420,25 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface ApiCaptureRouteChildren {
+  ApiCaptureConfirmRoute: typeof ApiCaptureConfirmRoute
+}
+
+const ApiCaptureRouteChildren: ApiCaptureRouteChildren = {
+  ApiCaptureConfirmRoute: ApiCaptureConfirmRoute,
+}
+
+const ApiCaptureRouteWithChildren = ApiCaptureRoute._addFileChildren(
+  ApiCaptureRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   TermosRoute: TermosRoute,
+  ApiCaptureRoute: ApiCaptureRouteWithChildren,
   ApiChatRoute: ApiChatRoute,
   ApiWhatsappWebhookRoute: ApiWhatsappWebhookRoute,
 }
