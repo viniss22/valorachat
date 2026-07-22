@@ -1,13 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/privacidade")({
-  head: () => ({ meta: [{ title: "Política de Privacidade — FinanceChat" }] }),
+  head: () => ({ meta: [{ title: "Política de Privacidade — Valora" }] }),
   component: () => (
     <div className="min-h-screen bg-background py-16 px-4">
       <div className="mx-auto max-w-3xl prose prose-slate">
         <Link to="/" className="text-sm text-primary">← Voltar</Link>
         <h1>Política de Privacidade</h1>
-        <p>Esta página descreve como o FinanceChat trata seus dados pessoais em conformidade com a Lei Geral de Proteção de Dados (Lei 13.709/2018 — LGPD).</p>
+        <p>Esta página descreve como o Valora trata seus dados pessoais em conformidade com a Lei Geral de Proteção de Dados (Lei 13.709/2018 — LGPD).</p>
         <h2>1. Dados coletados</h2>
         <p>Coletamos apenas o necessário: e-mail, nome, número de WhatsApp (opcional) e as movimentações financeiras que você registra.</p>
         <h2>2. Finalidade</h2>

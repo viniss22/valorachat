@@ -8,7 +8,7 @@ import { PageHeader } from "@/components/page-header";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/app/assistente")({
-  head: () => ({ meta: [{ title: "Assistente IA — FinanceChat" }] }),
+  head: () => ({ meta: [{ title: "Assistente IA — Valora" }] }),
   component: AssistentePage,
 });
 
@@ -147,7 +147,7 @@ function AssistentePage() {
             </button>
           </div>
           <p className="mx-auto mt-2 max-w-3xl text-center text-[10px] text-muted-foreground">
-            Powered by Lovable AI · As respostas podem conter imprecisões.
+            As respostas podem conter imprecisões.
           </p>
         </form>
       </div>

@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import { ShieldCheck, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Acessar — FinanceChat" }] }),
+  head: () => ({ meta: [{ title: "Acessar — Valora" }] }),
   component: AuthPage,
 });
 
@@ -106,7 +106,7 @@ function AuthPage() {
         <div className="text-center">
           <Link to="/" className="inline-flex items-center gap-2 text-2xl font-bold text-foreground">
             <ShieldCheck className="h-7 w-7 text-primary" />
-            FinanceChat
+            Valora
           </Link>
           <p className="mt-2 text-sm text-muted-foreground">Sua vida financeira, segura e privada.</p>
         </div>

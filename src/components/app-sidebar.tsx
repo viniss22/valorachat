@@ -73,7 +73,7 @@ export function AppSidebar() {
           <div className="grid size-8 place-items-center rounded-lg bg-primary">
             <div className="size-3 rounded-full bg-primary-foreground" />
           </div>
-          <span className="text-lg font-semibold tracking-tight">FinanceChat</span>
+          <span className="text-lg font-semibold tracking-tight">Valora</span>
         </Link>
       </div>
 

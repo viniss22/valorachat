@@ -115,7 +115,7 @@ export async function logAi(
     await supabaseAdmin.from("ai_processing_logs").insert({
       user_id: userId,
       message_text: text,
-      model: "gpt-4-turbo",
+      model: "gpt-4o-mini",
       confidence: result.confidence,
       extracted_json: result as unknown as never,
       latency_ms: latencyMs,

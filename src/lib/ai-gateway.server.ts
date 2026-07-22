@@ -1,18 +1,5 @@
-import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { createOpenAI } from "@ai-sdk/openai";
 import { generateText } from "ai";
-
-/**
- * Provedor legado: Lovable AI Gateway (mantido para não quebrar chamadas
- * existentes que importem `createLovableAiGatewayProvider`).
- */
-export function createLovableAiGatewayProvider(apiKey: string) {
-  return createOpenAICompatible({
-    name: "lovable-ai-gateway",
-    baseURL: "https://ai.gateway.lovable.dev/v1",
-    headers: { "Lovable-API-Key": apiKey },
-  });
-}
 
 /**
  * Cria um provider OpenAI compatível com `ai@6`.
@@ -97,7 +84,7 @@ export async function parseFinanceMessage(
   const openai = createOpenAIProvider();
 
   const { text } = await generateText({
-    model: openai("gpt-4-turbo"),
+    model: openai("gpt-4o-mini"),
     system: PARSER_SYSTEM,
     prompt: trimmed,
     temperature: 0,

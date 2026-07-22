@@ -169,7 +169,7 @@ export const Route = createFileRoute("/api/chat")({
         try {
           const openai = createOpenAIProvider();
           const result = streamText({
-            model: openai("gpt-4-turbo"),
+            model: openai("gpt-4o-mini"),
             system,
             messages: await convertToModelMessages(messages),
           });
