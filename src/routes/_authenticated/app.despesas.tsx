@@ -90,11 +90,29 @@ function DespesasPage() {
         </Section>
         <Section title="Sugestões da IA" action={<Sparkles className="size-4 text-primary" />}>
           <div className="rounded-xl bg-gradient-to-br from-accent to-muted/40 p-4 text-xs text-muted-foreground">
-            {despesas.length === 0
-              ? "As sugestões aparecerão após você registrar algumas despesas."
-              : biggest
-                ? `Você concentrou ${((biggest[1]/totalCents)*100).toFixed(0)}% em ${biggest[0]}. Considere revisar esse grupo para liberar espaço no orçamento.`
-                : "Continue registrando para receber recomendações personalizadas."}
+            {(() => {
+              // Insight só vale se houver dados suficientes para significar algo.
+              // Com 2-3 lançamentos, qualquer "concentração" é ruído estatístico.
+              const MIN_LANCAMENTOS = 5;
+              if (despesas.length === 0)
+                return "Registre suas primeiras despesas e eu começo a apontar padrões por aqui.";
+              if (despesas.length < MIN_LANCAMENTOS)
+                return `Estou observando. A partir de ${MIN_LANCAMENTOS} lançamentos consigo identificar padrões nos seus gastos.`;
+              if (!biggest) return "Continue registrando para receber análises personalizadas.";
+
+              const pct = (biggest[1] / totalCents) * 100;
+
+              // Caso especial: muita coisa em "Outro" indica falha de
+              // categorização, não comportamento de consumo. Sugerir "revisar
+              // o orçamento de Outros" seria um conselho vazio.
+              if (biggest[0] === "Outro" && pct >= 30)
+                return `${pct.toFixed(0)}% dos seus gastos estão em "Outro". Toque no lápis de cada lançamento para ajustar a categoria — quanto mais preciso, melhores ficam as análises.`;
+
+              if (pct >= 40)
+                return `${biggest[0]} concentra ${pct.toFixed(0)}% dos seus gastos do período (${brl(biggest[1] / 100)}). Vale conferir se está dentro do que você esperava.`;
+
+              return `Seus gastos estão bem distribuídos entre as categorias — a maior é ${biggest[0]}, com ${pct.toFixed(0)}%.`;
+            })()}
           </div>
         </Section>
       </div>

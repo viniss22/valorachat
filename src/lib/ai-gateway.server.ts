@@ -57,14 +57,47 @@ Receba uma frase do usuário e devolva APENAS um JSON puro (sem markdown, sem co
 - description: string curta descrevendo a transação (sem o valor)
 - confidence: number entre 0 e 1
 
-Categorias de DESPESA: ${EXPENSE_CATEGORIES.join(", ")}.
-Categorias de RECEITA: ${INCOME_CATEGORIES.join(", ")}.
+CATEGORIAS DE DESPESA — use a definição para escolher:
+- Alimentação: mercado, feira, restaurante, lanche, delivery, café, padaria, doces, bebidas.
+- Moradia: aluguel, condomínio, IPTU, luz, água, gás, internet, telefone fixo, reforma, manutenção da casa.
+- Transporte: combustível, Uber/99/táxi, ônibus, metrô, estacionamento, pedágio, seguro e manutenção do carro.
+- Lazer: cinema, shows, viagens, passeios, bares, festas, hobbies, presentes.
+- Saúde: farmácia, remédios, consultas, exames, plano de saúde, dentista, terapia, academia.
+- Educação: cursos, faculdade, escola, livros, material escolar, certificações.
+- Assinaturas: streaming, apps, software, revistas, academias por mensalidade, serviços recorrentes.
+- Compras: roupas, calçados, eletrônicos, móveis, utensílios, itens de casa, enxoval, cama/mesa/banho,
+  decoração, papelaria, cosméticos, itens pessoais e qualquer bem material que não seja alimento.
+- Outro: APENAS quando nada acima se aplicar de verdade.
+
+CATEGORIAS DE RECEITA:
+- Salário: salário, 13º, férias, adiantamento, vale.
+- Honorários: pagamento de cliente, freelance, serviço prestado, consultoria, comissão.
+- Dividendos: proventos, JCP, rendimentos de investimentos.
+- Aluguéis: aluguel recebido de imóvel.
+- Vendas: venda de produto ou item.
+
+REGRA DE OURO SOBRE "Outro":
+"Outro" é o ÚLTIMO recurso. Antes de usá-lo, pergunte-se: é algo material que a
+pessoa comprou? => Compras. É consumo de comida ou bebida? => Alimentação.
+É algo da casa (contas, manutenção)? => Moradia. Só use "Outro" quando
+realmente não houver encaixe — por exemplo: taxas bancárias, impostos avulsos,
+multas, doações.
+
+EXEMPLOS (siga este padrão):
+"gastei 31 em itens de enxoval" -> {"amount":31,"category":"Compras","type":"despesa","description":"itens de enxoval","confidence":0.93}
+"comprei 250 de produtos para atendimento" -> {"amount":250,"category":"Compras","type":"despesa","description":"produtos para atendimento","confidence":0.85}
+"paguei 120 de luz" -> {"amount":120,"category":"Moradia","type":"despesa","description":"conta de luz","confidence":0.96}
+"10 em doce" -> {"amount":10,"category":"Alimentação","type":"despesa","description":"doce","confidence":0.94}
+"45 no uber" -> {"amount":45,"category":"Transporte","type":"despesa","description":"Uber","confidence":0.96}
+"recebi 1200 do cliente João" -> {"amount":1200,"category":"Honorários","type":"receita","description":"cliente João","confidence":0.95}
+"paguei 80 de multa" -> {"amount":80,"category":"Outro","type":"despesa","description":"multa","confidence":0.9}
 
 Regras:
 - "gastei", "paguei", "comprei", "torrei" => despesa.
 - "recebi", "ganhei", "caiu", "entrou", "salário" => receita.
 - Se o valor for claro e a categoria óbvia, confidence >= 0.9.
-- Se houver ambiguidade (valor ausente, categoria genérica), confidence < 0.7.
+- Se houver ambiguidade real (valor ausente, item indecifrável), confidence < 0.7.
+- Escolher "Outro" por preguiça NÃO é aceitável: prefira a categoria mais próxima.
 - Se NÃO for possível identificar o valor, retorne amount = 0 e confidence baixa.
 - CRÍTICO: se a frase for uma PERGUNTA, um pedido de análise ou qualquer coisa
   que NÃO seja o registro de um lançamento, retorne amount = 0 e confidence = 0.
