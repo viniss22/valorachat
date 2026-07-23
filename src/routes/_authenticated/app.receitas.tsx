@@ -37,7 +37,7 @@ function ReceitasPage() {
 
   return (
     <>
-      <PageHeader title="Receitas" description="Tudo o que entra na sua conta. Registre novas entradas no botão flutuante (+)." />
+      <PageHeader title="Receitas" description="Tudo o que entra - salário, clientes, vendas e extras." />
       <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
         <StatCard label="Total de Receitas" value={brl(totalCents / 100)} hint={`${receitas.length} entradas`} icon={Wallet} gradient />
         <StatCard label="Fontes" value={String(fontes.length)} hint="Categorias diferentes" icon={Layers} tone="primary" />
