@@ -71,7 +71,7 @@ function InvestimentosPage() {
     <>
       <PageHeader
         title="Carteira de Investimentos"
-        description="Acompanhe seu patrimônio investido por classe de ativo — dados 100% seus."
+        description="Seu patrimônio investido, organizado por tipo de aplicação."
         actions={
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
@@ -101,9 +101,9 @@ function InvestimentosPage() {
               <PieIcon className="size-8" />
             </div>
             <div className="max-w-sm space-y-1">
-              <h3 className="text-base font-semibold">Nenhum investimento cadastrado</h3>
+              <h3 className="text-base font-semibold">Comece a acompanhar seu patrimônio</h3>
               <p className="text-sm text-muted-foreground">
-                Registre seus aportes em Tesouro, CDBs, ações, FIIs, ETFs e cripto. Você controla o valor atual manualmente para acompanhar a rentabilidade.
+                Cadastre o que você já tem — Tesouro, CDB, ações, FIIs, ETFs ou cripto. Basta informar quanto investiu e quanto vale hoje; nós calculamos a rentabilidade.
               </p>
             </div>
             <Button onClick={() => setOpen(true)} className="gap-2"><Plus className="size-4" /> Adicionar primeiro ativo</Button>

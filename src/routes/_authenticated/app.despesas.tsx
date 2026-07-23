@@ -47,7 +47,7 @@ function DespesasPage() {
 
   return (
     <>
-      <PageHeader title="Despesas" description="Suas despesas reais — registradas no botão flutuante (+) ou via WhatsApp." />
+      <PageHeader title="Despesas" description="Tudo o que sai da sua conta, em um lugar só." />
       <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
         <StatCard label="Total de Despesas" value={brl(totalCents / 100)} hint={`${despesas.length} movimentações`} icon={ArrowUpFromLine} gradient />
         <StatCard label="Maior Categoria" value={biggest?.[0] ?? "—"} tone="danger" hint={biggest ? brl(biggest[1] / 100) : "Sem despesas"} icon={Flame} />
@@ -116,7 +116,7 @@ function DespesasPage() {
           <ul className="divide-y divide-border">{despesas.map((t) => (
             <li key={t.id} className="-mx-2 flex items-center gap-3 rounded-md px-2 py-3 transition-colors hover:bg-muted/40">
               <div className="grid size-9 shrink-0 place-items-center rounded-full bg-destructive/10 text-destructive"><ArrowUpFromLine className="size-4" /></div>
-              <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{t.description}</p><p className="text-xs text-muted-foreground">{t.category} · {dateBR(t.transaction_date)}{t.source === "whatsapp" && " · via WhatsApp"}</p></div>
+              <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{t.description}</p><p className="text-xs text-muted-foreground">{t.category} · {dateBR(t.transaction_date)}{(t.source === "app_chat" || t.source === "whatsapp") && " · pelo assistente"}</p></div>
               <span className="text-sm font-semibold tabular-nums">− {brl(t.amount_cents / 100)}</span>
               <button onClick={() => setEditing(t)} aria-label="Editar" className="text-muted-foreground hover:text-primary"><Pencil className="size-4" /></button>
               <button onClick={() => handleDelete(t.id)} aria-label="Excluir" className="text-muted-foreground hover:text-destructive"><Trash2 className="size-4" /></button>
@@ -134,8 +134,8 @@ function EmptyDespesas() {
       <div className="grid size-12 place-items-center rounded-full bg-destructive/10 text-destructive">
         <ArrowUpFromLine className="size-5" />
       </div>
-      <p className="text-sm font-medium">Nenhuma despesa registrada</p>
-      <p className="max-w-xs text-xs text-muted-foreground">Use o botão <strong>+</strong> ou envie uma mensagem no WhatsApp para começar a acompanhar seus gastos.</p>
+      <p className="text-sm font-medium">Sua primeira despesa começa aqui</p>
+      <p className="max-w-xs text-xs text-muted-foreground">Toque no <strong>+</strong> para preencher, ou diga ao <strong>Assistente</strong>: <em>“gastei 50 no almoço”</em>. Ele entende e registra pra você.</p>
     </div>
   );
 }

@@ -19,7 +19,9 @@ function AppLayout() {
           <Outlet />
         </div>
       </main>
-      <QuickCaptureButton onClick={() => setCaptureOpen(true)} />
+      {/* FAB de chat removido: a captura conversacional agora vive na aba
+          Assistente IA. Dois botões flutuantes empilhados cobriam o
+          conteúdo no mobile. */}
       <QuickCapturePanel open={captureOpen} onOpenChange={setCaptureOpen} />
       <TransactionFab />
       <MobileNav />

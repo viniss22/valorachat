@@ -59,7 +59,7 @@ function MetasPage() {
     <>
       <PageHeader
         title="Metas Financeiras"
-        description="Defina objetivos, acompanhe o progresso e celebre cada conquista."
+        description="Escolha um objetivo e acompanhe o quanto falta."
         actions={
           <Button onClick={() => setNovaOpen(true)} className="gap-2">
             <Plus className="size-4" /> Nova Meta
@@ -69,8 +69,8 @@ function MetasPage() {
 
       <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
         <StatCard label="Total das Metas" value={brl(totalAlvo)} icon={Target} gradient />
-        <StatCard label="Acumulado" value={brl(totalAcumulado)} tone="success" icon={PiggyBank} hint={totalAlvo > 0 ? `${((totalAcumulado / totalAlvo) * 100).toFixed(0)}% do objetivo total` : "Sem metas ainda"} />
-        <StatCard label="Metas Concluídas" value={`${completas} de ${metas.length}`} tone="primary" icon={Trophy} hint="Continue firme! 🚀" />
+        <StatCard label="Acumulado" value={brl(totalAcumulado)} tone="success" icon={PiggyBank} hint={totalAlvo > 0 ? `${((totalAcumulado / totalAlvo) * 100).toFixed(0)}% do objetivo total` : "Crie sua primeira meta"} />
+        <StatCard label="Metas Concluídas" value={`${completas} de ${metas.length}`} tone="primary" icon={Trophy} hint={completas > 0 ? "Continue assim!" : "A primeira é a mais difícil"} />
       </div>
 
       {isLoading && (

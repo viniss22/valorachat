@@ -87,11 +87,11 @@ function Dashboard() {
     <>
       <PageHeader
         title={firstName ? `Olá, ${firstName}` : "Olá"}
-        description="Bem-vindo de volta. Seus dados são exclusivamente seus e estão protegidos."
+        description="Seu resumo do mês. Só você enxerga estes dados."
         actions={
-          <Link to="/app/whatsapp"
+          <Link to="/app/assistente"
             className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-muted">
-            <MessageCircle className="size-4" /> Central WhatsApp
+            <MessageCircle className="size-4" /> Registrar conversando
           </Link>
         }
       />
@@ -169,7 +169,7 @@ function Dashboard() {
 
           <Section title="Gastos por Categoria" action={<Link to="/app/despesas" className="text-xs font-medium text-primary">Ver detalhes</Link>}>
             {categorias.length === 0 ? (
-              <p className="py-6 text-center text-sm text-muted-foreground">Nenhuma despesa no período selecionado.</p>
+              <p className="py-6 text-center text-sm text-muted-foreground">Nenhuma despesa neste período. Experimente ampliar o intervalo acima.</p>
             ) : (
               <div className="grid grid-cols-1 gap-6 md:grid-cols-[1fr_220px]">
               <div className="space-y-4">
@@ -228,8 +228,8 @@ function Dashboard() {
           <Section title="Atalhos">
             <ul className="space-y-2 text-sm">
               <li><Link to="/app/metas" className="text-primary hover:underline">→ Gerenciar metas</Link></li>
-              <li><Link to="/app/whatsapp" className="text-primary hover:underline">→ Vincular WhatsApp</Link></li>
-              <li><Link to="/app/assistente" className="text-primary hover:underline">→ Falar com a IA</Link></li>
+                            <li><Link to="/app/assistente" className="text-primary hover:underline">→ Registrar ou perguntar ao assistente</Link></li>
+              <li><Link to="/app/despesas" className="text-primary hover:underline">→ Ver todas as despesas</Link></li>
             </ul>
           </Section>
         </div>
@@ -273,7 +273,7 @@ function AlertsCard({ filtered, categorias, economia }: { filtered: TransactionR
   if (economia >= 20) alerts.push({ label: `Economia acima da média (${economia.toFixed(0)}%) 🎉`, tone: "ok" });
   if (economia < 0) alerts.push({ label: `Gastos superam receitas em ${Math.abs(economia).toFixed(0)}%`, tone: "warn" });
   const recentes = filtered.filter((t) => t.kind === "despesa").slice(0, 3);
-  if (recentes.length === 0 && filtered.length === 0) alerts.push({ label: "Nenhuma movimentação no período. Registre a primeira no botão +.", tone: "info" });
+  if (recentes.length === 0 && filtered.length === 0) alerts.push({ label: "Tudo pronto para começar. Registre sua primeira movimentação no botão + ou peça ao assistente.", tone: "info" });
 
   return (
     <Section title="Alertas inteligentes">
