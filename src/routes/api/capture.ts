@@ -44,6 +44,12 @@ export const Route = createFileRoute("/api/capture")({
         }
 
         const text = parsedBody.data.text;
+        // Proteção de custo: toda chamada abaixo consome a API da OpenAI.
+        const { checkAiRateLimit, incrementUsage } = await import("@/lib/rate-limit.server");
+        const limite = await checkAiRateLimit(userId);
+        if (!limite.allowed) {
+          return Response.json({ status: "error", hint: limite.hint });
+        }
         const startedAt = Date.now();
         let result;
         try {
@@ -55,6 +61,7 @@ export const Route = createFileRoute("/api/capture")({
         }
         const latencyMs = Date.now() - startedAt;
         await logAi(userId, text, result, latencyMs);
+        await incrementUsage(userId, "ai_parse_calls");
 
         if (result.confidence < 0.5) {
           return Response.json({
