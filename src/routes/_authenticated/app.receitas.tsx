@@ -85,7 +85,7 @@ function ReceitasPage() {
               {receitas.map((t) => (
                 <li key={t.id} className="flex items-center gap-3 py-3 transition-colors hover:bg-muted/40 -mx-2 px-2 rounded-md">
                   <div className="grid size-9 shrink-0 place-items-center rounded-full bg-success/10 text-success"><ArrowDownToLine className="size-4" /></div>
-                  <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{t.description}</p><p className="text-xs text-muted-foreground">{t.category} · {dateBR(t.transaction_date)}{t.source === "whatsapp" && " · via WhatsApp"}</p></div>
+                  <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{t.description}</p><p className="text-xs text-muted-foreground">{t.category} · {dateBR(t.transaction_date)}{(t.source === "app_chat" || t.source === "whatsapp") && " · pelo assistente"}</p></div>
                   <span className="text-sm font-semibold tabular-nums text-success">+ {brl(t.amount_cents / 100)}</span>
                   <button onClick={() => setEditing(t)} aria-label="Editar" className="text-muted-foreground hover:text-primary"><Pencil className="size-4" /></button>
                   <button onClick={() => handleDelete(t.id)} aria-label="Excluir" className="text-muted-foreground hover:text-destructive"><Trash2 className="size-4" /></button>
@@ -106,8 +106,8 @@ function EmptyState() {
       <div className="grid size-12 place-items-center rounded-full bg-success/10 text-success">
         <ArrowDownToLine className="size-5" />
       </div>
-      <p className="text-sm font-medium">Nenhuma receita ainda</p>
-      <p className="max-w-xs text-xs text-muted-foreground">Toque no botão <strong>+</strong> ou envie uma mensagem no WhatsApp para registrar sua primeira entrada.</p>
+      <p className="text-sm font-medium">Nada recebido por aqui ainda</p>
+      <p className="max-w-xs text-xs text-muted-foreground">Toque no <strong>+</strong> para preencher, ou diga ao <strong>Assistente</strong>: <em>"recebi 1200 do cliente João"</em>.</p>
     </div>
   );
 }
