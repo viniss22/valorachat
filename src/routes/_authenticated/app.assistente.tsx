@@ -188,7 +188,7 @@ function AssistentePage() {
     <div className="flex h-[calc(100vh-6rem)] flex-col">
       <PageHeader
         title="Assistente IA"
-        description="Registre gastos ou pergunte sobre suas finanças."
+        description="Escreva como você fala. Eu registro e respondo."
       />
 
       <div className="flex flex-1 flex-col overflow-hidden rounded-xl bg-card ring-1 ring-black/5">
