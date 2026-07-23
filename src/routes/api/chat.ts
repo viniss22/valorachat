@@ -164,6 +164,21 @@ export const Route = createFileRoute("/api/chat")({
         }
 
         const userId = await resolveUserId(request.headers.get("authorization"));
+
+        // Proteção de custo: o streaming abaixo consome a API da OpenAI.
+        if (userId) {
+          const { checkAiRateLimit, incrementUsage } = await import(
+            "@/lib/rate-limit.server"
+          );
+          const limite = await checkAiRateLimit(userId);
+          if (!limite.allowed) {
+            return new Response(limite.hint ?? "Limite diário atingido.", {
+              status: 429,
+            });
+          }
+          await incrementUsage(userId, "ai_parse_calls");
+        }
+
         const system = await getSystemPrompt(userId);
 
         try {
