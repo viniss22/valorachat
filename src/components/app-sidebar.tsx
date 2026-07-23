@@ -34,7 +34,10 @@ type NavItem = {
 
 const items: NavItem[] = [
   { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { to: "/app/whatsapp", label: "Central WhatsApp", icon: MessageCircle, badge: true },
+  // Central WhatsApp — OCULTA da navegação (canal dormente).
+  // O backend continua intacto: webhook, sender, processor e tabelas.
+  // Para reativar, basta descomentar a linha abaixo.
+  // { to: "/app/whatsapp", label: "Central WhatsApp", icon: MessageCircle, badge: true },
   { to: "/app/receitas", label: "Receitas", icon: ArrowDownToLine },
   { to: "/app/despesas", label: "Despesas", icon: ArrowUpFromLine },
   { to: "/app/investimentos", label: "Investimentos", icon: TrendingUp },

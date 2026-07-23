@@ -34,7 +34,7 @@ export async function resolveUserId(authHeader: string | null): Promise<string |
   if (!token) return null;
 
   const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_PUBLISHABLE_KEY;
+  const key = (process.env.SUPABASE_PUBLISHABLE_KEY ?? process.env.VITE_SUPABASE_PUBLISHABLE_KEY);
   if (!url || !key) return null;
 
   const client = createClient<Database>(url, key, {

@@ -66,6 +66,12 @@ Regras:
 - Se o valor for claro e a categoria óbvia, confidence >= 0.9.
 - Se houver ambiguidade (valor ausente, categoria genérica), confidence < 0.7.
 - Se NÃO for possível identificar o valor, retorne amount = 0 e confidence baixa.
+- CRÍTICO: se a frase for uma PERGUNTA, um pedido de análise ou qualquer coisa
+  que NÃO seja o registro de um lançamento, retorne amount = 0 e confidence = 0.
+  Exemplos que devem receber confidence = 0:
+  "quanto gastei este mês?", "qual meu saldo?", "posso pedir iFood?",
+  "como economizar?", "me mostra o resumo", "quais minhas metas?".
+  Perguntas NUNCA viram transação.
 - NUNCA escreva texto fora do JSON.`;
 
 /**
