@@ -10,7 +10,7 @@ import { PageHeader } from "@/components/page-header";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/app/assistente")({
-  head: () => ({ meta: [{ title: "Assistente IA — Valora" }] }),
+  head: () => ({ meta: [{ title: "Val — Valora" }] }),
   component: AssistentePage,
 });
 
@@ -226,8 +226,8 @@ function AssistentePage() {
   return (
     <div className="flex h-[calc(100vh-6rem)] flex-col">
       <PageHeader
-        title="Assistente IA"
-        description="Escreva como você fala. Eu registro e respondo."
+        title="Val"
+        description="Sua assistente financeira. Escreva como fala — eu registro e respondo."
         actions={
           historico.length > 0 || messages.length > 0 ? (
             <button
@@ -249,7 +249,7 @@ function AssistentePage() {
                 <Sparkles className="size-7" />
               </div>
               <h2 className="mt-6 text-xl font-semibold">
-                Olá{nome ? `, ${nome.split(" ")[0]}` : ""} 👋
+                Oi{nome ? `, ${nome.split(" ")[0]}` : ""}! Sou a Val 👋
               </h2>
               <p className="mt-2 text-sm text-muted-foreground">
                 Escreva como você fala: <em>“gastei 50 no almoço”</em> registra na hora.
@@ -299,7 +299,7 @@ function AssistentePage() {
                           isUser ? "bg-accent text-primary" : "bg-primary text-primary-foreground"
                         }`}
                       >
-                        {isUser ? iniciais : "IA"}
+                        {isUser ? iniciais : "Val"}
                       </div>
                       <div
                         className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${
@@ -417,7 +417,7 @@ function MensagemHistorico({ h, iniciais }: { h: Historico; iniciais: string }) 
           isUser ? "bg-accent text-primary" : "bg-primary text-primary-foreground"
         }`}
       >
-        {isUser ? iniciais : "IA"}
+        {isUser ? iniciais : "Val"}
       </div>
       <div
         className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${

@@ -6,6 +6,7 @@ const confirmSchema = z.object({
   category: z.string().trim().min(1).max(60),
   type: z.enum(["receita", "despesa"]),
   description: z.string().trim().max(200).default(""),
+  scope: z.enum(["pessoal", "empresa"]).optional().default("pessoal"),
 });
 
 export const Route = createFileRoute("/api/capture/confirm")({

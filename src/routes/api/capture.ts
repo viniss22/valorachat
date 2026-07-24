@@ -93,6 +93,7 @@ export const Route = createFileRoute("/api/capture")({
             category: result.category,
             type: result.type,
             description: result.description,
+            scope: result.scope,
           });
           const resumo = summary(
             result.type,
