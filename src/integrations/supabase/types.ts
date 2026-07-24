@@ -92,6 +92,39 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_messages: {
+        Row: {
+          capture_status: string | null
+          content: string
+          created_at: string
+          id: string
+          kind: string
+          role: string
+          transaction_id: string | null
+          user_id: string
+        }
+        Insert: {
+          capture_status?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          kind?: string
+          role: string
+          transaction_id?: string | null
+          user_id: string
+        }
+        Update: {
+          capture_status?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          role?: string
+          transaction_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           color: string | null

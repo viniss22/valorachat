@@ -50,6 +50,9 @@ export const Route = createFileRoute("/api/capture")({
         if (!limite.allowed) {
           return Response.json({ status: "error", hint: limite.hint });
         }
+        const { saveMessage } = await import("@/lib/chat-history.server");
+        await saveMessage({ userId, role: "user", content: text });
+
         const startedAt = Date.now();
         let result;
         try {
@@ -91,6 +94,20 @@ export const Route = createFileRoute("/api/capture")({
             type: result.type,
             description: result.description,
           });
+          const resumo = summary(
+            result.type,
+            result.amount,
+            inserted.category,
+            inserted.description,
+          );
+          await saveMessage({
+            userId,
+            role: "assistant",
+            content: resumo,
+            kind: "capture",
+            captureStatus: "created",
+            transactionId: inserted.id,
+          });
           return Response.json({
             status: "created",
             transaction: {
@@ -101,7 +118,7 @@ export const Route = createFileRoute("/api/capture")({
               description: inserted.description,
               transaction_date: inserted.transaction_date,
             },
-            summary: summary(result.type, result.amount, inserted.category, inserted.description),
+            summary: resumo,
           });
         } catch (err) {
           const hint = err instanceof Error ? err.message : "Erro ao registrar.";

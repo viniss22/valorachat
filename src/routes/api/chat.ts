@@ -9,9 +9,12 @@ const BRL = new Intl.NumberFormat("pt-BR", {
   currency: "BRL",
 });
 
-const NEUTRAL_PROMPT = `Você é a IA do Finora, assistente financeira pessoal em Português do Brasil.
-O usuário ainda não tem transações registradas. Incentive-o a começar enviando gastos pelo WhatsApp
-ou cadastrando manualmente em Receitas/Despesas. Seja breve, empática e use formatação R$ 1.234,56.`;
+const NEUTRAL_PROMPT = `Você é a IA do Valora, assistente financeira pessoal em Português do Brasil.
+O usuário ainda não tem transações registradas. Incentive-o a começar escrevendo aqui mesmo,
+em linguagem natural (ex.: "gastei 50 no almoço"), ou pelo botão + em Receitas/Despesas.
+Seja breve, empática e use formatação R$ 1.234,56.
+IMPORTANTE: você não é consultora de investimentos credenciada — não recomende
+produtos financeiros específicos nem alocação de carteira.`;
 
 const FALLBACK_PROMPT = `Você é a IA do Finora, assistente financeira pessoal em Português do Brasil.
 Não foi possível carregar os dados do usuário agora. Seja útil de forma genérica, empática e concisa;
@@ -203,10 +206,39 @@ export const Route = createFileRoute("/api/chat")({
 
         try {
           const openai = createOpenAIProvider();
+          const { saveMessage, loadContext } = await import(
+            "@/lib/chat-history.server"
+          );
+
+          // Texto da última pergunta do usuário (para salvar no histórico).
+          const ultima = messages[messages.length - 1];
+          const perguntaUsuario =
+            ultima?.parts
+              ?.map((p) => (p.type === "text" ? p.text : ""))
+              .join("")
+              .trim() ?? "";
+
+          // Conversas anteriores entram como contexto para a IA entender
+          // perguntas de acompanhamento ("e comparado ao mês passado?").
+          const anteriores = userId ? await loadContext(userId) : [];
+
+          if (userId && perguntaUsuario) {
+            await saveMessage({ userId, role: "user", content: perguntaUsuario });
+          }
+
           const result = streamText({
             model: openai("gpt-4o-mini"),
             system,
-            messages: await convertToModelMessages(messages),
+            messages: [
+              ...anteriores.map((m) => ({ role: m.role, content: m.content })),
+              ...(await convertToModelMessages(messages)),
+            ],
+            // Grava a resposta completa assim que o streaming termina.
+            onFinish: async ({ text }) => {
+              if (userId && text.trim()) {
+                await saveMessage({ userId, role: "assistant", content: text });
+              }
+            },
           });
           return result.toUIMessageStreamResponse({ originalMessages: messages });
         } catch (err) {
