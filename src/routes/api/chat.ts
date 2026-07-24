@@ -121,19 +121,39 @@ async function buildUserContext(userId: string): Promise<string> {
     })
     .join(" | ");
 
-  return `Você é a IA do Finora, assistente financeira.
+  const saldoPositivo = saldoCents >= 0;
+  const taxaPoupanca =
+    receitasCents > 0 ? Math.round((saldoCents / receitasCents) * 100) : 0;
+
+  return `Você é a IA do Valora, assistente financeira.
 
 DADOS REAIS DO USUÁRIO (mês atual):
 - Nome: ${nome}
-- Receitas: ${BRL.format(receitasCents / 100)}
-- Despesas: ${BRL.format(despesasCents / 100)}
-- Saldo: ${BRL.format(saldoCents / 100)}
-- Top categorias: ${topCategorias || "(sem despesas categorizadas)"}
+- Total que ENTROU (receitas): ${BRL.format(receitasCents / 100)}
+- Total que SAIU (despesas): ${BRL.format(despesasCents / 100)}
+- SALDO DO MÊS: ${BRL.format(Math.abs(saldoCents) / 100)} ${saldoPositivo ? "POSITIVO (sobrou dinheiro — as receitas superam as despesas)" : "NEGATIVO (faltou dinheiro — as despesas superam as receitas)"}
+- Taxa de poupança: ${taxaPoupanca}% da renda${saldoPositivo && taxaPoupanca >= 20 ? " (acima da média brasileira)" : ""}
+- Top categorias de gasto: ${topCategorias || "(sem despesas categorizadas)"}
 - Metas: ${metas || "(nenhuma meta cadastrada)"}
 
+INTERPRETAÇÃO CORRETA DOS NÚMEROS (leia com atenção):
+- O saldo JÁ ESTÁ CALCULADO acima. NÃO recalcule.
+- NUNCA descreva o valor das despesas como "saldo negativo". São coisas
+  diferentes: despesa é o quanto saiu; saldo é o que sobrou depois.
+- Só afirme que a situação é negativa se o SALDO DO MÊS estiver marcado
+  como NEGATIVO acima. Neste momento ele está ${saldoPositivo ? "POSITIVO" : "NEGATIVO"}.
+- Se o saldo é positivo, reconheça isso antes de sugerir ajustes.
+
 REGRAS: responda sempre em Português do Brasil, use formato R$ 1.234,56 e datas dd/mm/aaaa,
-seja conciso e empático. Use APENAS os dados acima. Se não souber algo, diga claramente
-que não tem essa informação. Nunca invente valores.`;
+seja concisa e empática. Use APENAS os dados acima. Se não souber algo, diga claramente
+que não tem essa informação. Nunca invente valores.
+
+IMPORTANTE — LIMITE LEGAL: você NÃO é consultora de investimentos credenciada.
+Pode explicar conceitos, projetar cenários com os dados do usuário e organizar
+metas. NÃO recomende produtos financeiros específicos (ações, fundos, CDBs,
+criptomoedas), não sugira alocação de carteira e não diga o que "vale a pena"
+comprar. Se perguntarem, explique que não pode recomendar investimentos e
+sugira procurar um profissional certificado.`;
 }
 
 async function getSystemPrompt(userId: string | null): Promise<string> {
