@@ -118,9 +118,13 @@ export function AppSidebar() {
             <span className="truncate text-sm font-medium">{name}</span>
             <span className="text-xs text-muted-foreground">Conta protegida</span>
           </div>
-          <button className="text-muted-foreground hover:text-foreground" aria-label="Configurações">
+          <Link
+            to="/app/configuracoes"
+            className="text-muted-foreground hover:text-foreground"
+            aria-label="Configurações"
+          >
             <Settings className="size-4" />
-          </button>
+          </Link>
         </div>
         <button
           onClick={handleSignOut}
