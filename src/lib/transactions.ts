@@ -13,12 +13,16 @@ export const PAYMENT_METHODS = [
 
 export const CATEGORIES_EXPENSE = [
   "Alimentação", "Moradia", "Transporte", "Lazer", "Saúde",
-  "Educação", "Assinaturas", "Compras", "Outros",
+  "Educação", "Assinaturas", "Compras", "Outro",
 ];
 
 export const CATEGORIES_INCOME = [
-  "Salário", "Honorários", "Dividendos", "Aluguéis", "Vendas", "Outros",
+  "Salário", "Honorários", "Dividendos", "Aluguéis", "Vendas",
 ];
+export const CATEGORIES_BUSINESS = [
+  "Insumos e mercadorias", "Equipamentos e ferramentas", "Serviços profissionais",
+  "Marketing e vendas", "Impostos e taxas", "Frete e deslocamento", "Espaço comercial",
+] as const;
 
 export const CATEGORY_COLORS: Record<string, string> = {
   "Alimentação": "oklch(0.68 0.15 160)",
@@ -48,6 +52,7 @@ export const transactionInputSchema = z.object({
   payment_method: z.enum(["pix", "dinheiro", "debito", "credito", "boleto", "transferencia", "outro"]).optional().nullable(),
   installments_total: z.number().int().min(1).max(120).default(1),
   notes: z.string().max(500).optional().nullable(),
+  scope: z.enum(["pessoal", "empresa"]).optional().default("pessoal"),
 });
 
 export type TransactionInput = z.infer<typeof transactionInputSchema>;
@@ -110,6 +115,7 @@ export async function createTransaction(input: TransactionInput) {
       installment_number: i + 1,
       notes: parsed.notes || null,
       source: "manual",
+      scope: parsed.scope ?? "pessoal",
     };
   });
 
