@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useProfile } from "@/lib/use-profile";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -21,7 +22,7 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import {
-  CATEGORIES_EXPENSE, CATEGORIES_INCOME, PAYMENT_METHODS,
+  CATEGORIES_EXPENSE, CATEGORIES_INCOME, PAYMENT_METHODS, CATEGORIES_BUSINESS,
   createTransaction,
 } from "@/lib/transactions";
 
@@ -36,6 +37,7 @@ export function TransactionFab() {
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
+  const [scope, setScope] = useState<"pessoal" | "empresa">("pessoal");
   const [txDate, setTxDate] = useState(todayISO());
   const [dueDate, setDueDate] = useState("");
   const [receivedDate, setReceivedDate] = useState("");
@@ -43,6 +45,9 @@ export function TransactionFab() {
   const [hasInstallments, setHasInstallments] = useState(false);
   const [installments, setInstallments] = useState(1);
   const [notes, setNotes] = useState("");
+
+  const { data: profile } = useProfile();
+  const isMEI = profile?.business_mode ?? false;
 
   const mutation = useMutation({
     mutationFn: createTransaction,
@@ -52,7 +57,7 @@ export function TransactionFab() {
       setOpen(false);
       setAmount(""); setDescription(""); setCategory(""); setNotes("");
       setMethod(""); setHasInstallments(false); setInstallments(1);
-      setDueDate(""); setReceivedDate("");
+      setDueDate(""); setReceivedDate(""); setScope("pessoal");
     },
     onError: (err: Error) => toast.error("Falha ao registrar", { description: err.message }),
   });
@@ -69,6 +74,7 @@ export function TransactionFab() {
       amount: parsedAmount,
       description,
       category,
+      scope,
       transaction_date: txDate,
       due_date: dueDate || null,
       received_date: receivedDate || null,
@@ -78,7 +84,12 @@ export function TransactionFab() {
     });
   }
 
-  const categories = kind === "receita" ? CATEGORIES_INCOME : CATEGORIES_EXPENSE;
+  const categories =
+    kind === "receita"
+      ? CATEGORIES_INCOME
+      : scope === "empresa"
+        ? [...CATEGORIES_BUSINESS, ...CATEGORIES_EXPENSE]
+        : CATEGORIES_EXPENSE;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -103,6 +114,28 @@ export function TransactionFab() {
               <TabsTrigger value="receita">Receita</TabsTrigger>
             </TabsList>
           </Tabs>
+
+          {isMEI && (
+            <div className="space-y-1.5">
+              <Label>Este lançamento é</Label>
+              <div className="inline-flex w-full rounded-lg border border-input bg-muted/30 p-0.5">
+                <button
+                  type="button"
+                  onClick={() => { setScope("pessoal"); setCategory(""); }}
+                  className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition ${scope === "pessoal" ? "bg-card shadow-sm" : "text-muted-foreground"}`}
+                >
+                  Pessoal
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setScope("empresa"); setCategory(""); }}
+                  className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition ${scope === "empresa" ? "bg-card text-primary shadow-sm" : "text-muted-foreground"}`}
+                >
+                  Empresa
+                </button>
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
