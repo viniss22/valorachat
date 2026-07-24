@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useEffect, useRef, useState } from "react";
-import { Send, Sparkles, Loader2, Check, Pencil, X } from "lucide-react";
+import { Send, Sparkles, Loader2, Check, Pencil, X, Trash2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -40,6 +40,15 @@ type Parsed = {
   description: string;
 };
 
+/** Mensagem vinda do histórico salvo (conversas anteriores). */
+type Historico = {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  kind: "text" | "capture";
+  capture_status: string | null;
+};
+
 /** Cartão de captura ancorado a uma posição da conversa. */
 type Captura = {
   id: string;
@@ -56,6 +65,8 @@ function AssistentePage() {
   const [capturas, setCapturas] = useState<Captura[]>([]);
   const [nome, setNome] = useState("");
   const [ocupado, setOcupado] = useState(false);
+  const [historico, setHistorico] = useState<Historico[]>([]);
+  const [carregandoHistorico, setCarregandoHistorico] = useState(true);
   const endRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
@@ -72,7 +83,7 @@ function AssistentePage() {
   });
 
   const loading = ocupado || status === "submitted" || status === "streaming";
-  const vazio = messages.length === 0 && capturas.length === 0;
+  const vazio = messages.length === 0 && capturas.length === 0 && historico.length === 0;
 
   /** Nome real do usuário — sem "Ricardo" hardcoded. */
   useEffect(() => {
@@ -86,9 +97,37 @@ function AssistentePage() {
     })();
   }, []);
 
+  /** Carrega a conversa anterior ao abrir a tela. */
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch("/api/chat/history", { headers: await authHeaders() });
+        const data = await res.json();
+        setHistorico(data.messages ?? []);
+      } catch {
+        // Falha ao carregar histórico não bloqueia o uso do chat.
+      } finally {
+        setCarregandoHistorico(false);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  async function limparConversa() {
+    if (!confirm("Apagar toda a conversa? Seus lançamentos não serão afetados.")) return;
+    try {
+      await fetch("/api/chat/history", { method: "DELETE", headers: await authHeaders() });
+      setHistorico([]);
+      setCapturas([]);
+      toast.success("Conversa apagada");
+    } catch {
+      toast.error("Não consegui apagar a conversa");
+    }
+  }
+
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, capturas, status]);
+  }, [messages, capturas, status, historico]);
 
   useEffect(() => {
     if (!loading) inputRef.current?.focus();
@@ -189,6 +228,17 @@ function AssistentePage() {
       <PageHeader
         title="Assistente IA"
         description="Escreva como você fala. Eu registro e respondo."
+        actions={
+          historico.length > 0 || messages.length > 0 ? (
+            <button
+              onClick={limparConversa}
+              className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3 py-2 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground"
+              title="Apagar a conversa (os lançamentos não são afetados)"
+            >
+              <Trash2 className="size-4" /> Limpar conversa
+            </button>
+          ) : undefined
+        }
       />
 
       <div className="flex flex-1 flex-col overflow-hidden rounded-xl bg-card ring-1 ring-black/5">
@@ -219,6 +269,21 @@ function AssistentePage() {
             </div>
           ) : (
             <div className="mx-auto max-w-3xl space-y-6">
+              {/* Conversas anteriores (carregadas do banco) */}
+              {historico.map((h) => (
+                <MensagemHistorico key={h.id} h={h} iniciais={iniciais} />
+              ))}
+
+              {historico.length > 0 && (messages.length > 0 || capturas.length > 0) && (
+                <div className="flex items-center gap-3 py-2">
+                  <div className="h-px flex-1 bg-border" />
+                  <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                    agora
+                  </span>
+                  <div className="h-px flex-1 bg-border" />
+                </div>
+              )}
+
               {capturasEm(0).map((c) => (
                 <CardCaptura key={c.id} {...cardProps(c)} />
               ))}
@@ -315,6 +380,63 @@ function AssistentePage() {
 }
 
 /* ------------------------------------------------------------------ */
+
+/**
+ * Mensagem vinda do histórico. Cartões de captura antigos aparecem como
+ * resultado final (registrado/cancelado) — não faz sentido mostrar botões
+ * de confirmação para algo que já foi decidido.
+ */
+function MensagemHistorico({ h, iniciais }: { h: Historico; iniciais: string }) {
+  const isUser = h.role === "user";
+
+  if (h.kind === "capture") {
+    const registrado = h.capture_status === "created";
+    return (
+      <div className="flex gap-3">
+        <div className="grid size-8 shrink-0 place-items-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+          IA
+        </div>
+        <div
+          className={`inline-flex items-center gap-2 rounded-2xl rounded-tl-none px-4 py-3 text-sm ${
+            registrado
+              ? "border border-emerald-500/20 bg-emerald-500/10"
+              : "bg-muted text-muted-foreground"
+          }`}
+        >
+          {registrado && <Check className="size-4 shrink-0 text-emerald-600" />}
+          <span className={registrado ? "font-medium" : ""}>{h.content}</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`flex gap-3 ${isUser ? "flex-row-reverse" : ""}`}>
+      <div
+        className={`grid size-8 shrink-0 place-items-center rounded-full text-xs font-bold ${
+          isUser ? "bg-accent text-primary" : "bg-primary text-primary-foreground"
+        }`}
+      >
+        {isUser ? iniciais : "IA"}
+      </div>
+      <div
+        className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${
+          isUser
+            ? "rounded-tr-none bg-primary text-primary-foreground"
+            : "rounded-tl-none bg-muted text-foreground"
+        }`}
+      >
+        {isUser ? (
+          <p>{h.content}</p>
+        ) : (
+          <div className="prose prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-strong:text-foreground">
+            <ReactMarkdown>{h.content}</ReactMarkdown>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 function CardCaptura({
   c,

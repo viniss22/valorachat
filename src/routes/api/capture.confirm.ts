@@ -41,6 +41,22 @@ export const Route = createFileRoute("/api/capture/confirm")({
 
         try {
           const inserted = await insertTransaction(userId, parsed.data);
+          const resumoConfirmado = summary(
+            parsed.data.type,
+            parsed.data.amount,
+            inserted.category,
+            inserted.description,
+          );
+          const { saveMessage } = await import("@/lib/chat-history.server");
+          await saveMessage({
+            userId,
+            role: "assistant",
+            content: resumoConfirmado,
+            kind: "capture",
+            captureStatus: "created",
+            transactionId: inserted.id,
+          });
+
           return Response.json({
             status: "created",
             transaction: {
@@ -51,7 +67,7 @@ export const Route = createFileRoute("/api/capture/confirm")({
               description: inserted.description,
               transaction_date: inserted.transaction_date,
             },
-            summary: summary(parsed.data.type, parsed.data.amount, inserted.category, inserted.description),
+            summary: resumoConfirmado,
           });
         } catch (err) {
           const hint = err instanceof Error ? err.message : "Erro ao registrar.";
