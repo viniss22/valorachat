@@ -77,7 +77,13 @@ export interface InsertInput {
 
 export async function insertTransaction(userId: string, parsed: InsertInput) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const today = new Date().toISOString().slice(0, 10);
+  // Data no fuso de São Paulo (UTC-3). Usar toISOString() puro gravava o dia
+  // seguinte para lançamentos feitos após 21h no Brasil (já era outro dia em UTC).
+  const today = new Date(
+    new Date().toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }),
+  )
+    .toISOString()
+    .slice(0, 10);
   const scope = parsed.scope === "empresa" ? "empresa" : "pessoal";
   const category = normalizeCategory(parsed.type, parsed.category, scope);
   const amountCents = Math.round(parsed.amount * 100);

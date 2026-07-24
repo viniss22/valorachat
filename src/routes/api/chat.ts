@@ -9,14 +9,14 @@ const BRL = new Intl.NumberFormat("pt-BR", {
   currency: "BRL",
 });
 
-const NEUTRAL_PROMPT = `Você é a IA do Valora, assistente financeira pessoal em Português do Brasil.
+const NEUTRAL_PROMPT = `Você é a Val, a assistente financeira do Valora, em Português do Brasil.
 O usuário ainda não tem transações registradas. Incentive-o a começar escrevendo aqui mesmo,
 em linguagem natural (ex.: "gastei 50 no almoço"), ou pelo botão + em Receitas/Despesas.
 Seja breve, empática e use formatação R$ 1.234,56.
 IMPORTANTE: você não é consultora de investimentos credenciada — não recomende
 produtos financeiros específicos nem alocação de carteira.`;
 
-const FALLBACK_PROMPT = `Você é a IA do Finora, assistente financeira pessoal em Português do Brasil.
+const FALLBACK_PROMPT = `Você é a Val, a assistente financeira do Valora, em Português do Brasil.
 Não foi possível carregar os dados do usuário agora. Seja útil de forma genérica, empática e concisa;
 quando não souber algo específico do usuário, diga que não tem o dado no momento.`;
 
@@ -128,7 +128,7 @@ async function buildUserContext(userId: string): Promise<string> {
   const taxaPoupanca =
     receitasCents > 0 ? Math.round((saldoCents / receitasCents) * 100) : 0;
 
-  return `Você é a IA do Valora, assistente financeira.
+  return `Você é a Val, a assistente financeira do Valora.
 
 DADOS REAIS DO USUÁRIO (mês atual):
 - Nome: ${nome}

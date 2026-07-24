@@ -42,7 +42,7 @@ const items: NavItem[] = [
   { to: "/app/despesas", label: "Despesas", icon: ArrowUpFromLine },
   { to: "/app/investimentos", label: "Investimentos", icon: TrendingUp },
   { to: "/app/metas", label: "Metas", icon: Target },
-  { to: "/app/assistente", label: "Assistente IA", icon: Sparkles },
+  { to: "/app/assistente", label: "Val · Assistente", icon: Sparkles },
   // Relatórios — OCULTO: a página ainda exibe dados de exemplo (mock-data).
   // Exibir números fictícios a um usuário pagante é vício de informação (CDC).
   // Reative quando a versão com dados reais estiver pronta.
