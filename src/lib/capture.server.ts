@@ -1,5 +1,11 @@
 import { createClient } from "@supabase/supabase-js";
-import { parseFinanceMessage, type ParseResult } from "@/lib/ai-gateway.server";
+import {
+  BUSINESS_CATEGORIES,
+  EXPENSE_CATEGORIES,
+  INCOME_CATEGORIES,
+  parseFinanceMessage,
+  type ParseResult,
+} from "@/lib/ai-gateway.server";
 import type { Database } from "@/integrations/supabase/types";
 
 const BRL = new Intl.NumberFormat("pt-BR", {
@@ -7,19 +13,30 @@ const BRL = new Intl.NumberFormat("pt-BR", {
   currency: "BRL",
 });
 
-const EXPENSE_CATEGORIES = [
-  "Alimentação", "Moradia", "Transporte", "Lazer", "Saúde",
-  "Educação", "Assinaturas", "Compras", "Outros",
-] as const;
+// Categorias vêm de ai-gateway.server para haver uma única fonte de verdade.
+// Antes estavam duplicadas aqui, o que gerou divergência ("Outro" vs "Outros").
 
-const INCOME_CATEGORIES = [
-  "Salário", "Honorários", "Dividendos", "Aluguéis", "Vendas", "Outros",
-] as const;
+export function normalizeCategory(
+  type: "receita" | "despesa",
+  category: string,
+  scope: "pessoal" | "empresa" = "pessoal",
+): string {
+  const allowed =
+    type === "receita"
+      ? INCOME_CATEGORIES
+      : scope === "empresa"
+        ? [...BUSINESS_CATEGORIES, ...EXPENSE_CATEGORIES]
+        : EXPENSE_CATEGORIES;
 
-export function normalizeCategory(type: "receita" | "despesa", category: string): string {
-  const allowed = type === "receita" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
   if ((allowed as readonly string[]).includes(category)) return category;
-  return "Outros";
+
+  // Fallback. Atenção: a categoria válida é "Outro" (singular) — antes esta
+  // função devolvia "Outros", criando duas categorias distintas no banco.
+  return type === "receita"
+    ? "Vendas"
+    : scope === "empresa"
+      ? "Insumos e mercadorias"
+      : "Outro";
 }
 
 export function summary(kind: "receita" | "despesa", amount: number, category: string, description?: string) {
@@ -54,12 +71,15 @@ export interface InsertInput {
   category: string;
   type: "receita" | "despesa";
   description: string;
+  /** Pessoal (padrão) ou do negócio, para MEI/autônomo. */
+  scope?: "pessoal" | "empresa";
 }
 
 export async function insertTransaction(userId: string, parsed: InsertInput) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const today = new Date().toISOString().slice(0, 10);
-  const category = normalizeCategory(parsed.type, parsed.category);
+  const scope = parsed.scope === "empresa" ? "empresa" : "pessoal";
+  const category = normalizeCategory(parsed.type, parsed.category, scope);
   const amountCents = Math.round(parsed.amount * 100);
   const description = (parsed.description || category).slice(0, 200);
 
@@ -76,6 +96,7 @@ export async function insertTransaction(userId: string, parsed: InsertInput) {
       installments_total: 1,
       installment_number: 1,
       source: "app_chat",
+      scope,
     })
     .select("id, kind, amount_cents, category, description, transaction_date")
     .single();

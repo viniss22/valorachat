@@ -134,7 +134,13 @@ function DespesasPage() {
           <ul className="divide-y divide-border">{despesas.map((t) => (
             <li key={t.id} className="-mx-2 flex items-center gap-3 rounded-md px-2 py-3 transition-colors hover:bg-muted/40">
               <div className="grid size-9 shrink-0 place-items-center rounded-full bg-destructive/10 text-destructive"><ArrowUpFromLine className="size-4" /></div>
-              <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{t.description}</p><p className="text-xs text-muted-foreground">{t.category} · {dateBR(t.transaction_date)}{(t.source === "app_chat" || t.source === "whatsapp") && " · pelo assistente"}</p></div>
+              <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{t.description}</p><p className="text-xs text-muted-foreground">{t.category} · {dateBR(t.transaction_date)}{(t.source === "app_chat" || t.source === "whatsapp") && " · pelo assistente"}</p>
+                    {t.scope === "empresa" && (
+                      <span className="mt-1 inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                        Empresa
+                      </span>
+                    )}
+                    <p className="hidden"></p></div>
               <span className="text-sm font-semibold tabular-nums">− {brl(t.amount_cents / 100)}</span>
               <button onClick={() => setEditing(t)} aria-label="Editar" className="text-muted-foreground hover:text-primary"><Pencil className="size-4" /></button>
               <button onClick={() => handleDelete(t.id)} aria-label="Excluir" className="text-muted-foreground hover:text-destructive"><Trash2 className="size-4" /></button>
