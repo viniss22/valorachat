@@ -297,6 +297,8 @@ export type Database = {
       }
       profiles: {
         Row: {
+          business_mode: boolean
+          business_name: string | null
           created_at: string
           full_name: string | null
           id: string
@@ -308,6 +310,8 @@ export type Database = {
           whatsapp_verified_at: string | null
         }
         Insert: {
+          business_mode?: boolean
+          business_name?: string | null
           created_at?: string
           full_name?: string | null
           id: string
@@ -319,6 +323,8 @@ export type Database = {
           whatsapp_verified_at?: string | null
         }
         Update: {
+          business_mode?: boolean
+          business_name?: string | null
           created_at?: string
           full_name?: string | null
           id?: string
@@ -387,6 +393,7 @@ export type Database = {
           notes: string | null
           payment_method: Database["public"]["Enums"]["payment_method"] | null
           received_date: string | null
+          scope: string
           source: string
           transaction_date: string
           updated_at: string
@@ -405,6 +412,7 @@ export type Database = {
           notes?: string | null
           payment_method?: Database["public"]["Enums"]["payment_method"] | null
           received_date?: string | null
+          scope?: string
           source?: string
           transaction_date: string
           updated_at?: string
@@ -423,6 +431,7 @@ export type Database = {
           notes?: string | null
           payment_method?: Database["public"]["Enums"]["payment_method"] | null
           received_date?: string | null
+          scope?: string
           source?: string
           transaction_date?: string
           updated_at?: string

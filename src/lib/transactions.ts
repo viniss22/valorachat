@@ -54,6 +54,8 @@ export type TransactionInput = z.infer<typeof transactionInputSchema>;
 
 export type TransactionRow = {
   id: string;
+  /** "pessoal" (padrão) ou "empresa" — separação PF/PJ para MEI. */
+  scope?: "pessoal" | "empresa" | null;
   kind: "receita" | "despesa";
   amount_cents: number;
   category: string;
