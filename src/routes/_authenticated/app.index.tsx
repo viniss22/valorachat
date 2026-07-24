@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { listTransactions, CATEGORY_COLORS, type TransactionRow } from "@/lib/transactions";
+import { useProfile } from "@/lib/use-profile";
+import { ScopeToggle, filterByScope, type ScopeFilter } from "@/components/scope-filter";
 import {
   Area, AreaChart, CartesianGrid, Cell, Pie, PieChart,
   ResponsiveContainer, Tooltip, XAxis, YAxis,
@@ -66,11 +68,24 @@ function Dashboard() {
   }, []);
 
   const { data: txs = [] } = useQuery({ queryKey: ["transactions"], queryFn: listTransactions });
+  const { data: profile } = useProfile();
+  const isMEI = profile?.business_mode ?? false;
+  const [scope, setScope] = useState<ScopeFilter>("todos");
   const [from, to] = useMemo(() => periodRange(period, customFrom, customTo), [period, customFrom, customTo]);
+  const scoped = useMemo(() => filterByScope(txs, isMEI ? scope : "todos"), [txs, scope, isMEI]);
   const filtered = useMemo(
-    () => txs.filter((t) => t.transaction_date >= from && t.transaction_date <= to),
+    () => scoped.filter((t) => t.transaction_date >= from && t.transaction_date <= to),
+    [scoped, from, to],
+  );
+
+  // Números do negócio (só calculados quando é MEI) — para o card de lucro.
+  const empresaTxs = useMemo(
+    () => txs.filter((t) => t.scope === "empresa" && t.transaction_date >= from && t.transaction_date <= to),
     [txs, from, to],
   );
+  const receitaEmpresa = empresaTxs.filter((t) => t.kind === "receita").reduce((s, t) => s + t.amount_cents, 0) / 100;
+  const despesaEmpresa = empresaTxs.filter((t) => t.kind === "despesa").reduce((s, t) => s + t.amount_cents, 0) / 100;
+  const lucroEmpresa = receitaEmpresa - despesaEmpresa;
 
   const receitas = filtered.filter((t) => t.kind === "receita").reduce((s, t) => s + t.amount_cents, 0) / 100;
   const despesas = filtered.filter((t) => t.kind === "despesa").reduce((s, t) => s + t.amount_cents, 0) / 100;
@@ -95,6 +110,21 @@ function Dashboard() {
           </Link>
         }
       />
+
+      {isMEI && (
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <ScopeToggle value={scope} onChange={setScope} />
+          <div className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-2 text-sm">
+            <span className="text-muted-foreground">Resultado do negócio no período: </span>
+            <span className={`font-semibold ${lucroEmpresa >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+              {brl(lucroEmpresa)}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              {" "}({brl(receitaEmpresa)} entradas − {brl(despesaEmpresa)} saídas)
+            </span>
+          </div>
+        </div>
+      )}
 
       <div className="mb-6 flex flex-wrap items-end gap-3 rounded-xl border border-border bg-card p-4">
         <div className="space-y-1">
