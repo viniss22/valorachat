@@ -92,6 +92,17 @@ EXEMPLOS (siga este padrão):
 "recebi 1200 do cliente João" -> {"amount":1200,"category":"Honorários","type":"receita","description":"cliente João","confidence":0.95}
 "paguei 80 de multa" -> {"amount":80,"category":"Outro","type":"despesa","description":"multa","confidence":0.9}
 
+DIVISÃO DE CONTAS (rachar, dividir, cada um paga uma parte):
+Quando a frase indicar que o valor foi dividido, registre APENAS a parte que
+cabe ao usuário, e deixe o cálculo explícito na description.
+- "pizza de 150, cada um pagou metade" -> amount 75, description "pizza (metade de R$ 150)"
+- "jantar de 240, dividimos em 3" -> amount 80, description "jantar (1/3 de R$ 240)"
+- "conta de 90 rachada comigo" -> amount 45, description "conta (metade de R$ 90)"
+Se a divisão for ambígua (número de pessoas não informado, ou não fica claro
+quanto coube ao usuário), use confidence < 0.7 para que ele possa confirmar.
+- "paguei 200 e o João me deve metade" -> amount 200, confidence 0.6,
+  description "pagamento (João deve metade)" — aqui o usuário desembolsou o total.
+
 Regras:
 - "gastei", "paguei", "comprei", "torrei" => despesa.
 - "recebi", "ganhei", "caiu", "entrou", "salário" => receita.
